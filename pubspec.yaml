@@ -1,0 +1,43 @@
+name: social_tower
+description: A new Flutter project.
+
+publish_to: 'none' 
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  cloud_firestore: ^0.16.0+1
+  custom_navigation_bar: ^0.7.1
+  eva_icons_flutter: ^2.0.1
+  firebase_auth: ^0.20.1
+  firebase_core: ^0.7.0
+  firebase_storage: ^7.0.0
+  flutter:
+    sdk: flutter
+  font_awesome_flutter: ^8.12.0
+  google_sign_in: ^4.5.9
+  image_picker: ^0.6.7+22
+  page_transition: ^1.1.7+6
+  provider: ^4.3.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins.ttf
+
+    - family: Monteserrat
+      fonts:
+        - asset: assets/fonts/Monteserat.ttf
