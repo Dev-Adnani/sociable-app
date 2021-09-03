@@ -21,6 +21,7 @@ dependencies:
   image_picker: ^0.6.7+22
   page_transition: ^1.1.7+6
   provider: ^4.3.3
+  flutter_login_facebook: ^0.5.0
 
 dev_dependencies:
   flutter_test:

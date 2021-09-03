@@ -1,15 +1,32 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/core/services/firebase.notifier.dart';
 
 class Authentication with ChangeNotifier {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final facebookLogin = FacebookLogin();
+  final googleLogin = GoogleSignIn();
   String userUid;
   String get getUserUid => userUid;
   String errorMessage;
   String get getErrorMessage => errorMessage;
+
+  Future<bool> forgetPassword({@required String email}) async {
+    try {
+      firebaseAuth.sendPasswordResetEmail(email: email);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      errorMessage = e.toString();
+      return false;
+    } catch (e) {
+      print(e);
+      errorMessage = e.toString();
+      return false;
+    }
+  }
 
   Future<bool> logIntoAccount(
       {@required String email,
@@ -41,7 +58,6 @@ class Authentication with ChangeNotifier {
     try {
       UserCredential userCredential = await firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
-
       User user = userCredential.user;
       userUid = user.uid;
       print('Created Account UID => $userUid');
@@ -57,13 +73,15 @@ class Authentication with ChangeNotifier {
     }
   }
 
-  Future logoutViaEmail() {
-    return firebaseAuth.signOut();
+  Future logoutViaEmail() async {
+    await firebaseAuth.signOut();
+    await googleLogin.signOut();
+    await facebookLogin.logOut();
   }
 
   Future<bool> signInWithGoogle({@required BuildContext context}) async {
     try {
-      final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAccount googleUser = await googleLogin.signIn();
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
@@ -98,7 +116,40 @@ class Authentication with ChangeNotifier {
     }
   }
 
-  Future signOutWithGoogle() async {
-    return GoogleSignIn().signOut();
+  Future<bool> signInWithFacebook({BuildContext context}) async {
+    try {
+      final response = await facebookLogin.logIn(permissions: [
+        FacebookPermission.email,
+        FacebookPermission.publicProfile,
+      ]);
+
+      final accessToken = response.accessToken;
+      final userCredentials = await firebaseAuth.signInWithCredential(
+        FacebookAuthProvider.credential(accessToken.token),
+      );
+
+      final User user = userCredentials.user;
+      userUid = user.uid;
+
+      Provider.of<FirebaseNotifier>(context, listen: false)
+          .createUserCollection(context, {
+        'useruid': userUid,
+        'userEmail': user.email,
+        'userName': user.displayName,
+        'userImage': user.photoURL,
+        'userPassword': accessToken.token,
+      });
+
+      print('Facebook User UID => $userUid');
+      notifyListeners();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      errorMessage = e.toString();
+      return false;
+    } catch (e) {
+      print(e);
+      errorMessage = e.toString();
+      return false;
+    }
   }
 }

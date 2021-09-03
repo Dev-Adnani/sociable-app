@@ -132,6 +132,26 @@ class LandingNotifier with ChangeNotifier {
               ),
             ),
             GestureDetector(
+              onTap: () async {
+                await Provider.of<Authentication>(context, listen: false)
+                    .signInWithFacebook(context: context)
+                    .then((value) {
+                  if (value) {
+                    Navigator.pushReplacement(
+                        context,
+                        PageTransition(
+                            child: HomeScreen(),
+                            type: PageTransitionType.leftToRight));
+                  } else {
+                    Provider.of<LandingService>(context, listen: false)
+                        .warningText(
+                            context,
+                            Provider.of<Authentication>(context, listen: false)
+                                .getErrorMessage,
+                            10.0);
+                  }
+                });
+              },
               child: Container(
                 child: Icon(
                   EvaIcons.facebookOutline,

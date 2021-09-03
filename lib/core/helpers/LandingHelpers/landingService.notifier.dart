@@ -348,7 +348,7 @@ class LandingService with ChangeNotifier {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: FloatingActionButton(
                       backgroundColor: redColor,
-                      onPressed: () async {
+                      onPressed: () {
                         if (userEmailController.text.isNotEmpty &&
                             userNameController.text.isNotEmpty &&
                             userPasswordController.text.isNotEmpty) {
@@ -379,6 +379,13 @@ class LandingService with ChangeNotifier {
                                     context: context)
                                 .then((value) {
                               if (value) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  PageTransition(
+                                      child: HomeScreen(),
+                                      type: PageTransitionType.bottomToTop),
+                                );
+
                                 print('Creating Collection');
                                 Provider.of<FirebaseNotifier>(context,
                                         listen: false)
@@ -403,20 +410,7 @@ class LandingService with ChangeNotifier {
                                         .getErrorMessage,
                                     8.0);
                               }
-                            }).then((value) => {
-                                      if (value)
-                                        {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            PageTransition(
-                                                child: HomeScreen(),
-                                                type: PageTransitionType
-                                                    .bottomToTop),
-                                          ),
-                                        }
-                                      else
-                                        {}
-                                    });
+                            });
                           }
                         } else {
                           warningText(
@@ -438,38 +432,41 @@ class LandingService with ChangeNotifier {
 
   warningText(BuildContext context, String warning, double fontsize) {
     return showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            decoration: BoxDecoration(
-              color: blueGreyColor,
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            height: MediaQuery.of(context).size.height * 0.3,
-            width: MediaQuery.of(context).size.width,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 150.0),
-                    child: Divider(
-                      thickness: 4.0,
-                      color: whiteColor,
-                    ),
-                  ),
-                  Text(
-                    warning,
-                    style: TextStyle(
-                        color: whiteColor,
-                        fontSize: fontsize,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
+      context: context,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: blueGreyColor,
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          height: MediaQuery.of(context).size.height * 0.2,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                child: Divider(
+                  thickness: 4.0,
+                  color: whiteColor,
+                ),
               ),
-            ),
-          );
-        });
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  warning,
+                  style: TextStyle(
+                      color: whiteColor,
+                      fontSize: fontsize,
+                      fontWeight: FontWeight.bold),
+                  maxLines: 5,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

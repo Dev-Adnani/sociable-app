@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="app_name">Social Tower</string>
+<string name="facebook_app_id">559233878854008</string>
+<string name="fb_login_protocol_scheme">fb559233878854008</string>
+</resources>
