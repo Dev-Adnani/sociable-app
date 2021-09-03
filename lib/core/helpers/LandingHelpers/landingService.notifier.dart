@@ -160,7 +160,7 @@ class LandingService with ChangeNotifier {
         builder: (context) {
           return Padding(
             padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
+                bottom: MediaQuery.of(context).viewInsets.horizontal * 0.2),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.30,
               width: MediaQuery.of(context).size.width,
@@ -217,15 +217,25 @@ class LandingService with ChangeNotifier {
                           Provider.of<Authentication>(context, listen: false)
                               .logIntoAccount(
                                   email: userEmailController.text,
-                                  password: userPasswordController.text)
-                              .whenComplete(
-                                () => Navigator.pushReplacement(
-                                  context,
-                                  PageTransition(
-                                      child: HomeScreen(),
-                                      type: PageTransitionType.bottomToTop),
-                                ),
+                                  password: userPasswordController.text,
+                                  context: context)
+                              .then((value) {
+                            if (value) {
+                              Navigator.pushReplacement(
+                                context,
+                                PageTransition(
+                                    child: HomeScreen(),
+                                    type: PageTransitionType.bottomToTop),
                               );
+                            } else {
+                              warningText(
+                                  context,
+                                  Provider.of<Authentication>(context,
+                                          listen: false)
+                                      .getErrorMessage,
+                                  12.0);
+                            }
+                          });
                         } else {
                           warningText(context, 'Fill All The Data', 16.0);
                         }
@@ -257,7 +267,7 @@ class LandingService with ChangeNotifier {
         builder: (context) {
           return Padding(
             padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
+                bottom: MediaQuery.of(context).viewInsets.horizontal * 0.3),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.5,
               width: MediaQuery.of(context).size.width,
@@ -338,7 +348,7 @@ class LandingService with ChangeNotifier {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: FloatingActionButton(
                       backgroundColor: redColor,
-                      onPressed: () {
+                      onPressed: () async {
                         if (userEmailController.text.isNotEmpty &&
                             userNameController.text.isNotEmpty &&
                             userPasswordController.text.isNotEmpty) {
@@ -365,30 +375,48 @@ class LandingService with ChangeNotifier {
                             Provider.of<Authentication>(context, listen: false)
                                 .createAccount(
                                     email: userEmailController.text,
-                                    password: userPasswordController.text)
-                                .whenComplete(() {
-                              print('Creating Collection');
-                              Provider.of<FirebaseNotifier>(context,
-                                      listen: false)
-                                  .createUserCollection(context, {
-                                'useruid': Provider.of<Authentication>(context,
+                                    password: userPasswordController.text,
+                                    context: context)
+                                .then((value) {
+                              if (value) {
+                                print('Creating Collection');
+                                Provider.of<FirebaseNotifier>(context,
                                         listen: false)
-                                    .getUserUid,
-                                'userEmail': userEmailController.text,
-                                'userName': userNameController.text,
-                                'userImage': Provider.of<LandingUtils>(context,
-                                        listen: false)
-                                    .getUserAvatarUrl,
-                                'userPassword': userPasswordController.text,
-                              });
-                            }).whenComplete(
-                              () => Navigator.pushReplacement(
-                                context,
-                                PageTransition(
-                                    child: HomeScreen(),
-                                    type: PageTransitionType.bottomToTop),
-                              ),
-                            );
+                                    .createUserCollection(context, {
+                                  'useruid': Provider.of<Authentication>(
+                                          context,
+                                          listen: false)
+                                      .getUserUid,
+                                  'userEmail': userEmailController.text,
+                                  'userName': userNameController.text,
+                                  'userImage': Provider.of<LandingUtils>(
+                                          context,
+                                          listen: false)
+                                      .getUserAvatarUrl,
+                                  'userPassword': userPasswordController.text,
+                                });
+                              } else {
+                                warningText(
+                                    context,
+                                    Provider.of<Authentication>(context,
+                                            listen: false)
+                                        .getErrorMessage,
+                                    8.0);
+                              }
+                            }).then((value) => {
+                                      if (value)
+                                        {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            PageTransition(
+                                                child: HomeScreen(),
+                                                type: PageTransitionType
+                                                    .bottomToTop),
+                                          ),
+                                        }
+                                      else
+                                        {}
+                                    });
                           }
                         } else {
                           warningText(
@@ -417,28 +445,29 @@ class LandingService with ChangeNotifier {
               color: blueGreyColor,
               borderRadius: BorderRadius.circular(15.0),
             ),
-            height: MediaQuery.of(context).size.height * 0.1,
+            height: MediaQuery.of(context).size.height * 0.3,
             width: MediaQuery.of(context).size.width,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 150.0),
-                  child: Divider(
-                    thickness: 4.0,
-                    color: whiteColor,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                    child: Divider(
+                      thickness: 4.0,
+                      color: whiteColor,
+                    ),
                   ),
-                ),
-                Center(
-                  child: Text(
+                  Text(
                     warning,
                     style: TextStyle(
                         color: whiteColor,
                         fontSize: fontsize,
                         fontWeight: FontWeight.bold),
                   ),
-                )
-              ],
+                ],
+              ),
             ),
           );
         });

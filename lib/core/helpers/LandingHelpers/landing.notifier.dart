@@ -99,21 +99,25 @@ class LandingNotifier with ChangeNotifier {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                try {
-                  Provider.of<Authentication>(context, listen: false)
-                      .signInWithGoogle()
-                      .whenComplete(() {
+              onTap: () async {
+                await Provider.of<Authentication>(context, listen: false)
+                    .signInWithGoogle(context: context)
+                    .then((value) {
+                  if (value) {
                     Navigator.pushReplacement(
                         context,
                         PageTransition(
                             child: HomeScreen(),
                             type: PageTransitionType.leftToRight));
-                  });
-                } catch (e) {
-                  final snackBar = SnackBar(content: Text(e.toString()));
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                }
+                  } else {
+                    Provider.of<LandingService>(context, listen: false)
+                        .warningText(
+                            context,
+                            Provider.of<Authentication>(context, listen: false)
+                                .getErrorMessage,
+                            10.0);
+                  }
+                });
               },
               child: Container(
                 child: Icon(
