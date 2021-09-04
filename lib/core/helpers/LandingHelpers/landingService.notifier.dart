@@ -214,28 +214,35 @@ class LandingService with ChangeNotifier {
                       onPressed: () {
                         if (userEmailController.text.isNotEmpty &&
                             userPasswordController.text.isNotEmpty) {
-                          Provider.of<Authentication>(context, listen: false)
-                              .logIntoAccount(
-                                  email: userEmailController.text,
-                                  password: userPasswordController.text,
-                                  context: context)
-                              .then((value) {
-                            if (value) {
-                              Navigator.pushReplacement(
-                                context,
-                                PageTransition(
-                                    child: HomeScreen(),
-                                    type: PageTransitionType.bottomToTop),
-                              );
-                            } else {
-                              warningText(
+                          if (RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$')
+                                  .hasMatch(userEmailController.text) &&
+                              userPasswordController.text.length > 6) {
+                            Provider.of<Authentication>(context, listen: false)
+                                .logIntoAccount(
+                                    email: userEmailController.text,
+                                    password: userPasswordController.text,
+                                    context: context)
+                                .then((value) {
+                              if (value) {
+                                Navigator.pushReplacement(
                                   context,
-                                  Provider.of<Authentication>(context,
-                                          listen: false)
-                                      .getErrorMessage,
-                                  12.0);
-                            }
-                          });
+                                  PageTransition(
+                                      child: HomeScreen(),
+                                      type: PageTransitionType.bottomToTop),
+                                );
+                              } else {
+                                warningText(
+                                    context,
+                                    Provider.of<Authentication>(context,
+                                            listen: false)
+                                        .getErrorMessage,
+                                    12.0);
+                              }
+                            });
+                          } else {
+                            warningText(
+                                context, 'Please Check Email/Password', 16.0);
+                          }
                         } else {
                           warningText(context, 'Fill All The Data', 16.0);
                         }
@@ -245,7 +252,19 @@ class LandingService with ChangeNotifier {
                         color: whiteColor,
                       ),
                     ),
-                  )
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        Provider.of<LandingService>(context, listen: false)
+                            .forgetPass(context);
+                      },
+                      child: Text(
+                        'Forget Password ?',
+                        style: TextStyle(
+                            color: whiteColor,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold),
+                      ))
                 ],
               ),
               decoration: BoxDecoration(
@@ -468,5 +487,95 @@ class LandingService with ChangeNotifier {
         );
       },
     );
+  }
+
+  forgetPass(BuildContext context) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.horizontal * 0.2),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.25,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                    child: Divider(
+                      thickness: 4.0,
+                      color: whiteColor,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: TextField(
+                      controller: userEmailController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter Email...',
+                        hintStyle: TextStyle(
+                            color: whiteColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0),
+                      ),
+                      style: TextStyle(
+                          color: whiteColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: FloatingActionButton(
+                      backgroundColor: blueColor,
+                      onPressed: () {
+                        if (userEmailController.text.isNotEmpty) {
+                          if ((RegExp(
+                                  r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$')
+                              .hasMatch(userEmailController.text))) {
+                            Provider.of<Authentication>(context, listen: false)
+                                .forgetPassword(
+                                    email: userEmailController.text,
+                                    context: context)
+                                .then((value) {
+                              if (value) {
+                                warningText(
+                                    context, 'Please Check Your Mail ID', 12.0);
+                              } else {
+                                warningText(
+                                    context,
+                                    Provider.of<Authentication>(context,
+                                            listen: false)
+                                        .getErrorMessage,
+                                    12.0);
+                              }
+                            });
+                          } else {
+                            warningText(context, 'Invaild Email', 16.0);
+                          }
+                        } else {
+                          warningText(context, 'Fill All The Data', 16.0);
+                        }
+                      },
+                      child: Icon(
+                        FontAwesomeIcons.check,
+                        color: whiteColor,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: blueGreyColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12.0),
+                  topRight: Radius.circular(12.0),
+                ),
+              ),
+            ),
+          );
+        });
   }
 }

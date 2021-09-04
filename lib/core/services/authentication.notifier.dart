@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
@@ -14,15 +15,16 @@ class Authentication with ChangeNotifier {
   String errorMessage;
   String get getErrorMessage => errorMessage;
 
-  Future<bool> forgetPassword({@required String email}) async {
+  Future<bool> forgetPassword(
+      {@required String email, @required BuildContext context}) async {
     try {
-      firebaseAuth.sendPasswordResetEmail(email: email);
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+      notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
       errorMessage = e.toString();
       return false;
-    } catch (e) {
-      print(e);
+    } on PlatformException catch (e) {
       errorMessage = e.toString();
       return false;
     }

@@ -240,7 +240,7 @@ class LandingNotifier with ChangeNotifier {
                     },
                   ),
                 ],
-              )
+              ),
             ],
           ),
           height: MediaQuery.of(context).size.height * 0.5,
