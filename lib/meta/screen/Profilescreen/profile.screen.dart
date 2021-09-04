@@ -3,6 +3,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
+import 'package:social_tower/core/helpers/ProfileHelpers/profile.helpers.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -22,7 +23,10 @@ class ProfileScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Provider.of<ProfileHelpers>(context, listen: false)
+                  .logoutDialog(context);
+            },
             icon: Icon(
               EvaIcons.logOutOutline,
               color: greenColor,
@@ -62,14 +66,23 @@ class ProfileScreen extends StatelessWidget {
                   .doc(Provider.of<Authentication>(context, listen: false)
                       .getUserUid)
                   .snapshots(),
-              builder: (context, snapshat) {
-                if (snapshat.connectionState == ConnectionState.waiting) {
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
                     child: CircularProgressIndicator(),
                   );
                 } else {
                   return new Column(
-                    children: [],
+                    children: [
+                      Provider.of<ProfileHelpers>(context, listen: false)
+                          .headerProfile(context, snapshot),
+                      Provider.of<ProfileHelpers>(context, listen: false)
+                          .divider(),
+                      Provider.of<ProfileHelpers>(context, listen: false)
+                          .middleProfile(context, snapshot),
+                      Provider.of<ProfileHelpers>(context, listen: false)
+                          .footerProfile(context, snapshot),
+                    ],
                   );
                 }
               },

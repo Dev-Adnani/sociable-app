@@ -75,7 +75,7 @@ class Authentication with ChangeNotifier {
     }
   }
 
-  Future logoutViaEmail() async {
+  Future logout() async {
     await firebaseAuth.signOut();
     await googleLogin.signOut();
     await facebookLogin.logOut();
