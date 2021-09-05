@@ -33,7 +33,7 @@ class HomePageHelpers with ChangeNotifier {
           backgroundImage: Provider.of<FirebaseNotifier>(context, listen: false)
                       .getInitUserImage ==
                   null
-              ? AssetImage('assets/images/empty.png')
+              ? AssetImage('assets/images/loading.png')
               : NetworkImage(
                   Provider.of<FirebaseNotifier>(context, listen: false)
                       .getInitUserImage),

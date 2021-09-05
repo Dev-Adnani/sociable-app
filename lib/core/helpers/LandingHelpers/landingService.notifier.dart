@@ -224,12 +224,19 @@ class LandingService with ChangeNotifier {
                                     context: context)
                                 .then((value) {
                               if (value) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  PageTransition(
-                                      child: HomeScreen(),
-                                      type: PageTransitionType.bottomToTop),
-                                );
+                                if (Provider.of<Authentication>(context,
+                                        listen: false)
+                                    .isVerified) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    PageTransition(
+                                        child: HomeScreen(),
+                                        type: PageTransitionType.bottomToTop),
+                                  );
+                                } else {
+                                  warningText(context,
+                                      'Please Verify Your Email', 16.0);
+                                }
                               } else {
                                 warningText(
                                     context,
@@ -398,12 +405,10 @@ class LandingService with ChangeNotifier {
                                     context: context)
                                 .then((value) {
                               if (value) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  PageTransition(
-                                      child: HomeScreen(),
-                                      type: PageTransitionType.bottomToTop),
-                                );
+                                warningText(
+                                    context,
+                                    'Account Created Successfully !! , Please Verify Your Email ID & Sign In To Proceed ',
+                                    16.0);
 
                                 print('Creating Collection');
                                 Provider.of<FirebaseNotifier>(context,

@@ -14,6 +14,7 @@ class Authentication with ChangeNotifier {
   String get getUserUid => userUid;
   String errorMessage;
   String get getErrorMessage => errorMessage;
+  bool isVerified = false;
 
   Future<bool> forgetPassword(
       {@required String email, @required BuildContext context}) async {
@@ -41,8 +42,15 @@ class Authentication with ChangeNotifier {
       User user = userCredential.user;
       userUid = user.uid;
       print(userUid);
-      notifyListeners();
-      return true;
+
+      if (user.emailVerified) {
+        isVerified = true;
+        notifyListeners();
+        return true;
+      } else {
+        isVerified = false;
+        return true;
+      }
     } on FirebaseAuthException catch (e) {
       errorMessage = e.toString();
       return false;
@@ -62,6 +70,8 @@ class Authentication with ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password);
       User user = userCredential.user;
       userUid = user.uid;
+
+      user.sendEmailVerification();
       print('Created Account UID => $userUid');
       notifyListeners();
       return true;
