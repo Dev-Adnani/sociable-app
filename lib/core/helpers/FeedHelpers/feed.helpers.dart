@@ -173,11 +173,20 @@ class FeedHelpers with ChangeNotifier {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
+                        height: 40,
                         width: 80,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             GestureDetector(
+                              onLongPress: () {
+                                Provider.of<PostFunctions>(context,
+                                        listen: false)
+                                    .showLikes(
+                                        context: context,
+                                        postId:
+                                            documentSnapshot.data()['caption']);
+                              },
                               onTap: () {
                                 print('Added Like');
                                 Provider.of<PostFunctions>(context,
@@ -228,6 +237,7 @@ class FeedHelpers with ChangeNotifier {
                         ),
                       ),
                       Container(
+                        height: 40,
                         width: 80,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -264,6 +274,7 @@ class FeedHelpers with ChangeNotifier {
                       ),
                       Container(
                         width: 80,
+                        height: 40,
                         child: Row(
                           children: [
                             GestureDetector(
