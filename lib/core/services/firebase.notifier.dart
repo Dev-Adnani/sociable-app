@@ -53,11 +53,16 @@ class FirebaseNotifier with ChangeNotifier {
     });
   }
 
-  Future uploadPostData(String postId, dynamic data) async {
+  Future uploadPostData(
+      {@required String postId, @required dynamic data}) async {
     return FirebaseFirestore.instance.collection('posts').doc(postId).set(data);
   }
 
-  Future deleteUserData(String userUid) async {
-    return FirebaseFirestore.instance.collection('users').doc(userUid).delete();
+  Future addAward({@required String postId, @required dynamic data}) async {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('awards')
+        .add(data);
   }
 }
