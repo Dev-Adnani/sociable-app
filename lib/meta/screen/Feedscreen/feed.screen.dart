@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:social_tower/app/constants/constant.colors.dart';
 import 'package:social_tower/core/helpers/FeedHelpers/feed.helpers.dart';
 
 class FeedScreen extends StatelessWidget {
@@ -8,6 +9,7 @@ class FeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: blueGreyColor,
       drawer: Drawer(),
       appBar: Provider.of<FeedHelpers>(context, listen: false).appBar(context),
       body: Provider.of<FeedHelpers>(context, listen: false).feedBody(context),

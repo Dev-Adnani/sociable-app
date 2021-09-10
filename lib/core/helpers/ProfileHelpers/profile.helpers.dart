@@ -41,7 +41,7 @@ class ProfileHelpers with ChangeNotifier {
                     style: TextStyle(
                         color: whiteColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 20.0),
+                        fontSize: 16.0),
                   ),
                 ),
                 Padding(
@@ -79,9 +79,6 @@ class ProfileHelpers with ChangeNotifier {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        decoration: BoxDecoration(
-                            color: darkColor,
-                            borderRadius: BorderRadius.circular(15.0)),
                         height: 70.0,
                         width: 80.0,
                         child: Column(
@@ -91,7 +88,7 @@ class ProfileHelpers with ChangeNotifier {
                               style: TextStyle(
                                   color: whiteColor,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 28.0),
+                                  fontSize: 20.0),
                             ),
                             Text(
                               'Followers',
@@ -106,9 +103,6 @@ class ProfileHelpers with ChangeNotifier {
                       Container(
                         height: 70.0,
                         width: 80.0,
-                        decoration: BoxDecoration(
-                            color: darkColor,
-                            borderRadius: BorderRadius.circular(15.0)),
                         child: Column(
                           children: [
                             Text(
@@ -116,7 +110,7 @@ class ProfileHelpers with ChangeNotifier {
                               style: TextStyle(
                                   color: whiteColor,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 28.0),
+                                  fontSize: 20.0),
                             ),
                             Text(
                               'Following',
@@ -136,9 +130,6 @@ class ProfileHelpers with ChangeNotifier {
                   child: Container(
                     height: 70.0,
                     width: 80.0,
-                    decoration: BoxDecoration(
-                        color: darkColor,
-                        borderRadius: BorderRadius.circular(15.0)),
                     child: Column(
                       children: [
                         Text(
@@ -146,7 +137,7 @@ class ProfileHelpers with ChangeNotifier {
                           style: TextStyle(
                               color: whiteColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 28.0),
+                              fontSize: 20.0),
                         ),
                         Text(
                           'Posts',

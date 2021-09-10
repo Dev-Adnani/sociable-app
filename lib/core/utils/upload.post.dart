@@ -4,7 +4,6 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
@@ -32,10 +31,9 @@ class UploadPost with ChangeNotifier {
     notifyListeners();
   }
 
-  Future uploadPostImageToFirebase() async {
-    Reference imgReference = FirebaseStorage.instance
-        .ref()
-        .child('posts/${uploastPostImage.path}/${TimeOfDay.now()}');
+  Future uploadPostImageToFirebase(BuildContext context) async {
+    Reference imgReference = FirebaseStorage.instance.ref().child(
+        'posts/${Provider.of<Authentication>(context, listen: false).getUserUid}/${TimeOfDay.now()}');
 
     imagePostUploadTask = imgReference.putFile(uploastPostImage);
     await imagePostUploadTask.whenComplete(() {
@@ -162,7 +160,7 @@ class UploadPost with ChangeNotifier {
                       MaterialButton(
                         color: blueColor,
                         onPressed: () {
-                          uploadPostImageToFirebase().whenComplete(() {
+                          uploadPostImageToFirebase(context).whenComplete(() {
                             editPostSheet(context);
                             print('Image Uploaded');
                           });
@@ -291,6 +289,7 @@ class UploadPost with ChangeNotifier {
                     print('Collection Created : Data Uploaded');
                     Provider.of<FirebaseNotifier>(context, listen: false)
                         .uploadPostData(captionController.text, {
+                      'postImage': getUploadPostImageUrl,
                       'caption': captionController.text,
                       'userName':
                           Provider.of<FirebaseNotifier>(context, listen: false)

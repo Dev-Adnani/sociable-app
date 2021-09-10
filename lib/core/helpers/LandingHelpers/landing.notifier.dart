@@ -206,8 +206,6 @@ class LandingNotifier with ChangeNotifier {
                   color: whiteColor,
                 ),
               ),
-              Provider.of<LandingService>(context, listen: false)
-                  .passwordLessSignIn(context),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -243,7 +241,7 @@ class LandingNotifier with ChangeNotifier {
               ),
             ],
           ),
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.1,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             color: blueGreyColor,

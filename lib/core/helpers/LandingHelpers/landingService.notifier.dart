@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -98,59 +97,6 @@ class LandingService with ChangeNotifier {
             ),
           );
         });
-  }
-
-  Widget passwordLessSignIn(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.40,
-      width: MediaQuery.of(context).size.width,
-      child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('users').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            if (snapshot.hasData) {
-              return new ListView(
-                  children: snapshot.data.docs
-                      .map((DocumentSnapshot documentSnapshot) {
-                return ListTile(
-                  trailing: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        FontAwesomeIcons.trashAlt,
-                        color: redColor,
-                      )),
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    backgroundImage: NetworkImage(
-                        (documentSnapshot.data() as dynamic)['userImage']),
-                  ),
-                  title: Text(
-                    (documentSnapshot.data() as dynamic)['userName'],
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: greenColor),
-                  ),
-                  subtitle: Text(
-                    (documentSnapshot.data() as dynamic)['userEmail'],
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: greenColor,
-                        fontSize: 12.0),
-                  ),
-                );
-              }).toList());
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }
-        },
-      ),
-    );
   }
 
   loginSheet(BuildContext context) {
@@ -414,7 +360,7 @@ class LandingService with ChangeNotifier {
                                 Provider.of<FirebaseNotifier>(context,
                                         listen: false)
                                     .createUserCollection(context, {
-                                  'useruid': Provider.of<Authentication>(
+                                  'userUid': Provider.of<Authentication>(
                                           context,
                                           listen: false)
                                       .getUserUid,
