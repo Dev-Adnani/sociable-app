@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
    <application
-        android:label="social_tower"
+        android:label="Social Tower"
         android:icon="@mipmap/ic_launcher">
         
         <meta-data android:name="com.facebook.sdk.ApplicationId" 

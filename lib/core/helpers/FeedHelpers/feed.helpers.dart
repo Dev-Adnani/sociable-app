@@ -65,7 +65,10 @@ class FeedHelpers with ChangeNotifier {
             ),
           ),
           child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection('posts')
+                .orderBy('time', descending: true)
+                .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
@@ -88,8 +91,10 @@ class FeedHelpers with ChangeNotifier {
   Widget loadPost(BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
     return ListView(
       children: snapshot.data.docs.map((DocumentSnapshot documentSnapshot) {
+        Provider.of<PostFunctions>(context, listen: false)
+            .showTimeAgo(timeData: documentSnapshot.data()['time']);
         return Container(
-          height: MediaQuery.of(context).size.height * 0.6,
+          height: MediaQuery.of(context).size.height * 0.68,
           width: MediaQuery.of(context).size.width,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -119,43 +124,70 @@ class FeedHelpers with ChangeNotifier {
                           children: [
                             Container(
                               child: Text(
-                                documentSnapshot.data()['caption'],
+                                documentSnapshot.data()['userName'],
                                 style: TextStyle(
                                     color: greenColor,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16.0),
+                                    fontSize: 14.0),
                               ),
                             ),
                             Container(
-                                child: RichText(
-                              text: TextSpan(
-                                text: documentSnapshot.data()['userName'],
+                              child: RichText(
+                                  text: TextSpan(
+                                text:
+                                    '${Provider.of<PostFunctions>(context, listen: false).getImageTime.toString()}',
                                 style: TextStyle(
-                                  color: blueColor,
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.bold,
+                                  color: lightColor.withOpacity(0.8),
                                 ),
-                                children: [
-                                  TextSpan(
-                                    text: ' , 12 hours ago',
-                                    style: TextStyle(
-                                      color: lightColor.withOpacity(0.8),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ))
+                              )),
+                            )
                           ],
                         ),
                       ),
                     ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                      width: MediaQuery.of(context).size.width * .2,
+                      child: StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('posts')
+                              .doc(documentSnapshot.data()['postId'])
+                              .collection('awards')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else {
+                              return new ListView(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                children: snapshot.data.docs
+                                    .map((DocumentSnapshot documentSnapshot) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 50.0,
+                                      height: 30.0,
+                                      child: Image.network(
+                                          documentSnapshot.data()['award']),
+                                    ),
+                                  );
+                                }).toList(),
+                              );
+                            }
+                          }),
+                    )
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 8.0),
+                padding:
+                    const EdgeInsets.only(top: 8.0, left: 12.0, right: 12.0),
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.46,
+                  height: MediaQuery.of(context).size.height * 0.45,
                   width: MediaQuery.of(context).size.width,
                   child: FittedBox(
                     child: Image.network(
@@ -166,9 +198,33 @@ class FeedHelpers with ChangeNotifier {
                 ),
               ),
               Padding(
+                padding: EdgeInsets.only(top: 8.0, left: 10.0, right: 10.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            documentSnapshot.data()['caption'],
+                            style: TextStyle(
+                              color: greyColor,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
+                  padding: const EdgeInsets.only(left: 25.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -185,7 +241,7 @@ class FeedHelpers with ChangeNotifier {
                                     .showLikes(
                                         context: context,
                                         postId:
-                                            documentSnapshot.data()['caption']);
+                                            documentSnapshot.data()['postId']);
                               },
                               onTap: () {
                                 print('Added Like');
@@ -194,7 +250,7 @@ class FeedHelpers with ChangeNotifier {
                                     .addLike(
                                         context: context,
                                         postId:
-                                            documentSnapshot.data()['caption'],
+                                            documentSnapshot.data()['postId'],
                                         subDocId: Provider.of<Authentication>(
                                                 context,
                                                 listen: false)
@@ -209,7 +265,7 @@ class FeedHelpers with ChangeNotifier {
                             StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection('posts')
-                                  .doc(documentSnapshot.data()['caption'])
+                                  .doc(documentSnapshot.data()['postId'])
                                   .collection('likes')
                                   .snapshots(),
                               builder: (context, snapshot) {
@@ -220,7 +276,7 @@ class FeedHelpers with ChangeNotifier {
                                   );
                                 } else {
                                   return Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
+                                    padding: const EdgeInsets.only(left: 10.0),
                                     child: Text(
                                       snapshot.data.docs.length.toString(),
                                       style: TextStyle(
@@ -250,7 +306,7 @@ class FeedHelpers with ChangeNotifier {
                                         context: context,
                                         snapshot: documentSnapshot,
                                         docId:
-                                            documentSnapshot.data()['caption']);
+                                            documentSnapshot.data()['postId']);
                               },
                               child: Icon(
                                 FontAwesomeIcons.comment,
@@ -261,7 +317,7 @@ class FeedHelpers with ChangeNotifier {
                             StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection('posts')
-                                  .doc(documentSnapshot.data()['caption'])
+                                  .doc(documentSnapshot.data()['postId'])
                                   .collection('comments')
                                   .snapshots(),
                               builder: (context, snapshot) {
@@ -300,7 +356,7 @@ class FeedHelpers with ChangeNotifier {
                                     .showRewards(
                                         context: context,
                                         postId:
-                                            documentSnapshot.data()['caption']);
+                                            documentSnapshot.data()['postId']);
                               },
                               child: Icon(
                                 FontAwesomeIcons.award,
@@ -311,7 +367,7 @@ class FeedHelpers with ChangeNotifier {
                             StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection('posts')
-                                  .doc(documentSnapshot.data()['caption'])
+                                  .doc(documentSnapshot.data()['postId'])
                                   .collection('awards')
                                   .snapshots(),
                               builder: (context, snapshot) {
@@ -345,7 +401,14 @@ class FeedHelpers with ChangeNotifier {
                           ? IconButton(
                               icon: Icon(EvaIcons.moreVertical,
                                   color: whiteColor),
-                              onPressed: () {},
+                              onPressed: () {
+                                Provider.of<PostFunctions>(context,
+                                        listen: false)
+                                    .showPostOptionMethod(
+                                        context: context,
+                                        postId:
+                                            documentSnapshot.data()['postId']);
+                              },
                             )
                           : Container(
                               width: 0.0,

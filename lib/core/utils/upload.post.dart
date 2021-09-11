@@ -10,6 +10,7 @@ import 'package:social_tower/app/constants/constant.colors.dart';
 import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 import 'package:social_tower/core/services/firebase.notifier.dart';
+import 'package:nanoid/nanoid.dart';
 
 class UploadPost with ChangeNotifier {
   File uploastPostImage;
@@ -287,28 +288,28 @@ class UploadPost with ChangeNotifier {
                 MaterialButton(
                   color: blueColor,
                   onPressed: () async {
+                    var randomID = nanoid(10);
                     if (captionController.text.isNotEmpty) {
                       print('Collection Created : Data Uploaded');
                       Provider.of<FirebaseNotifier>(context, listen: false)
-                          .uploadPostData(
-                              postId: captionController.text,
-                              data: {
-                            'postImage': getUploadPostImageUrl,
-                            'caption': captionController.text,
-                            'userName': Provider.of<FirebaseNotifier>(context,
-                                    listen: false)
-                                .getInitUserName,
-                            'userImage': Provider.of<FirebaseNotifier>(context,
-                                    listen: false)
-                                .getInitUserImage,
-                            'userUid': Provider.of<Authentication>(context,
-                                    listen: false)
+                          .uploadPostData(postId: randomID, data: {
+                        'postId': randomID,
+                        'postImage': getUploadPostImageUrl,
+                        'caption': captionController.text,
+                        'userName': Provider.of<FirebaseNotifier>(context,
+                                listen: false)
+                            .getInitUserName,
+                        'userImage': Provider.of<FirebaseNotifier>(context,
+                                listen: false)
+                            .getInitUserImage,
+                        'userUid':
+                            Provider.of<Authentication>(context, listen: false)
                                 .getUserUid,
-                            'time': Timestamp.now(),
-                            'userEmail': Provider.of<FirebaseNotifier>(context,
-                                    listen: false)
-                                .getInitUserEmail,
-                          }).whenComplete(() {
+                        'time': Timestamp.now(),
+                        'userEmail': Provider.of<FirebaseNotifier>(context,
+                                listen: false)
+                            .getInitUserEmail,
+                      }).whenComplete(() {
                         Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.pop(context);

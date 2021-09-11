@@ -65,4 +65,16 @@ class FirebaseNotifier with ChangeNotifier {
         .collection('awards')
         .add(data);
   }
+
+  Future deleteUserPost(
+      {@required String id, @required dynamic collection}) async {
+    return FirebaseFirestore.instance.collection(collection).doc(id).delete();
+  }
+
+  Future updateCaption({@required String postId, @required dynamic data}) {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .update(data);
+  }
 }

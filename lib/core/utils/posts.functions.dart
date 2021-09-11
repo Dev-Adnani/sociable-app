@@ -6,20 +6,222 @@ import 'package:social_tower/app/constants/constant.colors.dart';
 import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 import 'package:social_tower/core/services/firebase.notifier.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:nanoid/nanoid.dart';
 
 class PostFunctions with ChangeNotifier {
   TextEditingController commentController = TextEditingController();
+
+  String imageTime;
+  String get getImageTime => imageTime;
+  TextEditingController editCaptionController = TextEditingController();
+
+  showTimeAgo({@required dynamic timeData}) {
+    Timestamp time = timeData;
+    DateTime dateTime = time.toDate();
+    imageTime = timeago.format(dateTime);
+    print('image Time => $imageTime');
+  }
+
+  showPostOptionMethod(
+      {@required BuildContext context, @required String postId}) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.1,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: blueGreyColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12.0),
+                topRight: Radius.circular(12.0),
+              ),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                  child: Divider(
+                    thickness: 4.0,
+                    color: whiteColor,
+                  ),
+                ),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      MaterialButton(
+                        color: blueColor,
+                        onPressed: () {
+                          showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (context) {
+                                return Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.3,
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                    color: blueGreyColor,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(12.0),
+                                      topRight: Radius.circular(12.0),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 300,
+                                          height: 50,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 12.0),
+                                            child: TextField(
+                                              controller: editCaptionController,
+                                              decoration: InputDecoration(
+                                                hintText: 'Edit your Caption',
+                                                hintStyle: TextStyle(
+                                                    color: whiteColor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16.0),
+                                              ),
+                                              style: TextStyle(
+                                                  color: whiteColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0),
+                                            ),
+                                          ),
+                                        ),
+                                        FloatingActionButton(
+                                          backgroundColor: redColor,
+                                          child: Icon(
+                                            FontAwesomeIcons.fileUpload,
+                                            color: greenColor,
+                                          ),
+                                          onPressed: () async {
+                                            if (editCaptionController
+                                                .text.isNotEmpty) {
+                                              Provider.of<FirebaseNotifier>(
+                                                      context,
+                                                      listen: false)
+                                                  .updateCaption(
+                                                      postId: postId,
+                                                      data: {
+                                                    'caption':
+                                                        editCaptionController
+                                                            .text
+                                                  }).whenComplete(() {
+                                                Navigator.pop(context);
+                                              });
+                                            } else {
+                                              Provider.of<LandingService>(
+                                                      context,
+                                                      listen: false)
+                                                  .warningText(
+                                                      context,
+                                                      'Please Type Something In Order To Edit',
+                                                      16.0);
+                                            }
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              });
+                        },
+                        child: Text(
+                          'Edit Caption',
+                          style: TextStyle(
+                              color: whiteColor,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      MaterialButton(
+                        color: redColor,
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  backgroundColor: darkColor,
+                                  title: Text(
+                                    'Delete The Post',
+                                    style: TextStyle(
+                                        color: whiteColor,
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  actions: [
+                                    MaterialButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        'No',
+                                        style: TextStyle(
+                                            decoration:
+                                                TextDecoration.underline,
+                                            color: whiteColor,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    MaterialButton(
+                                      color: redColor,
+                                      onPressed: () {
+                                        Provider.of<FirebaseNotifier>(context,
+                                                listen: false)
+                                            .deleteUserPost(
+                                                id: postId, collection: 'posts')
+                                            .whenComplete(() {
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Text(
+                                        'Yes',
+                                        style: TextStyle(
+                                            color: whiteColor,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              });
+                        },
+                        child: Text(
+                          'Delete Post',
+                          style: TextStyle(
+                              color: whiteColor,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        });
+  }
 
   Future addLike(
       {@required BuildContext context,
       @required String postId,
       @required String subDocId}) async {
+    var randomID = nanoid(10);
     return FirebaseFirestore.instance
         .collection('posts')
         .doc(postId)
         .collection('likes')
         .doc(subDocId)
         .set({
+      'likeId': randomID,
       'likes': FieldValue.increment(1),
       'userName':
           Provider.of<FirebaseNotifier>(context, listen: false).getInitUserName,
@@ -35,13 +237,15 @@ class PostFunctions with ChangeNotifier {
   Future addComment(
       {@required BuildContext context,
       @required String postId,
-      @required String comment}) async {
+      @required String comment,
+      @required String commentID}) async {
     await FirebaseFirestore.instance
         .collection('posts')
         .doc(postId)
         .collection('comments')
-        .doc(comment)
+        .doc(commentID)
         .set({
+      'commentId': commentID,
       'userName':
           Provider.of<FirebaseNotifier>(context, listen: false).getInitUserName,
       'userUid': Provider.of<Authentication>(context, listen: false).getUserUid,
@@ -270,11 +474,14 @@ class PostFunctions with ChangeNotifier {
                           onPressed: () {
                             if (commentController.text.isNotEmpty) {
                               print('Adding Comment');
+                              var randomID = nanoid(10);
+
                               addComment(
-                                      context: context,
-                                      postId: snapshot.data()['caption'],
-                                      comment: commentController.text)
-                                  .whenComplete(() {
+                                commentID: randomID,
+                                context: context,
+                                postId: snapshot.data()['postId'],
+                                comment: commentController.text,
+                              ).whenComplete(() {
                                 commentController.clear();
                                 notifyListeners();
                                 Provider.of<LandingService>(context,
@@ -311,7 +518,7 @@ class PostFunctions with ChangeNotifier {
       context: context,
       builder: (context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.50,
+          height: MediaQuery.of(context).size.height * 0.35,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             color: blueGreyColor,
@@ -347,7 +554,7 @@ class PostFunctions with ChangeNotifier {
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.2,
+                height: MediaQuery.of(context).size.height * 0.3,
                 width: MediaQuery.of(context).size.width,
                 child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
