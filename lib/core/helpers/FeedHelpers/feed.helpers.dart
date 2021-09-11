@@ -3,11 +3,13 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
 import 'package:social_tower/core/utils/posts.functions.dart';
 import 'package:social_tower/core/utils/upload.post.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
+import 'package:social_tower/meta/screen/AltProfileScreen/alt.profile.screen.dart';
 
 class FeedHelpers with ChangeNotifier {
   Widget appBar(BuildContext context) {
@@ -106,6 +108,21 @@ class FeedHelpers with ChangeNotifier {
                   children: [
                     GestureDetector(
                       child: GestureDetector(
+                        onTap: () {
+                          if (documentSnapshot.data()['userUid'] !=
+                              Provider.of<Authentication>(context,
+                                      listen: false)
+                                  .getUserUid) {
+                            Navigator.pushReplacement(
+                              context,
+                              PageTransition(
+                                  child: AltProfile(
+                                    userUid: documentSnapshot.data()['userUid'],
+                                  ),
+                                  type: PageTransitionType.bottomToTop),
+                            );
+                          }
+                        },
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
                           radius: 20.0,
@@ -350,6 +367,14 @@ class FeedHelpers with ChangeNotifier {
                         child: Row(
                           children: [
                             GestureDetector(
+                              onLongPress: () {
+                                Provider.of<PostFunctions>(context,
+                                        listen: false)
+                                    .showAwardsPresenter(
+                                        context: context,
+                                        postId:
+                                            documentSnapshot.data()['postId']);
+                              },
                               onTap: () {
                                 Provider.of<PostFunctions>(context,
                                         listen: false)

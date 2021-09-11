@@ -1,5 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:social_tower/core/helpers/AltScreenHelpers/alt.profile.helper.dart';
 import 'package:social_tower/core/helpers/FeedHelpers/feed.helpers.dart';
 import 'package:social_tower/core/helpers/HomeScreenHelpers/homePage.helpers.dart';
 import 'package:social_tower/core/helpers/LandingHelpers/landing.notifier.dart';
@@ -24,4 +25,5 @@ List<SingleChildWidget> remoteProviders = [
   ChangeNotifierProvider(create: (_) => UploadPost()),
   ChangeNotifierProvider(create: (_) => FeedHelpers()),
   ChangeNotifierProvider(create: (_) => PostFunctions()),
+  ChangeNotifierProvider(create: (_) => AltProfileHelper()),
 ];

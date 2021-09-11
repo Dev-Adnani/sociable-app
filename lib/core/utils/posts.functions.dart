@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
 import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 import 'package:social_tower/core/services/firebase.notifier.dart';
+import 'package:social_tower/meta/screen/AltProfileScreen/alt.profile.screen.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:nanoid/nanoid.dart';
 
@@ -337,6 +339,25 @@ class PostFunctions with ChangeNotifier {
                                     Row(
                                       children: [
                                         GestureDetector(
+                                          onTap: () {
+                                            if (documentSnapshot
+                                                    .data()['userUid'] !=
+                                                Provider.of<Authentication>(
+                                                        context,
+                                                        listen: false)
+                                                    .getUserUid) {
+                                              Navigator.pushReplacement(
+                                                context,
+                                                PageTransition(
+                                                    child: AltProfile(
+                                                      userUid: documentSnapshot
+                                                          .data()['userUid'],
+                                                    ),
+                                                    type: PageTransitionType
+                                                        .bottomToTop),
+                                              );
+                                            }
+                                          },
                                           child: Padding(
                                             padding: EdgeInsets.only(
                                                 top: 8.0, left: 10.0),
@@ -574,6 +595,22 @@ class PostFunctions with ChangeNotifier {
                             .map((DocumentSnapshot documentSnapshot) {
                           return ListTile(
                             leading: GestureDetector(
+                              onTap: () {
+                                if (documentSnapshot.data()['userUid'] !=
+                                    Provider.of<Authentication>(context,
+                                            listen: false)
+                                        .getUserUid) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    PageTransition(
+                                        child: AltProfile(
+                                          userUid: documentSnapshot
+                                              .data()['userUid'],
+                                        ),
+                                        type: PageTransitionType.bottomToTop),
+                                  );
+                                }
+                              },
                               child: CircleAvatar(
                                 backgroundColor: darkColor,
                                 backgroundImage: NetworkImage(
@@ -629,6 +666,132 @@ class PostFunctions with ChangeNotifier {
         );
       },
     );
+  }
+
+  showAwardsPresenter(
+      {@required BuildContext context, @required String postId}) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.4,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: blueGreyColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(18.0),
+                topRight: Radius.circular(18.0),
+              ),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                  child: Divider(
+                    thickness: 4.0,
+                    color: whiteColor,
+                  ),
+                ),
+                Container(
+                  width: 200,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: whiteColor),
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Award Tower',
+                      style: TextStyle(
+                        color: blueColor,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    width: MediaQuery.of(context).size.width,
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('posts')
+                          .doc(postId)
+                          .collection('awards')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else {
+                          return new ListView(
+                            children: snapshot.data.docs
+                                .map((DocumentSnapshot documentSnapshot) {
+                              return ListTile(
+                                leading: GestureDetector(
+                                  onTap: () {
+                                    if (documentSnapshot.data()['userUid'] !=
+                                        Provider.of<Authentication>(context,
+                                                listen: false)
+                                            .getUserUid) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        PageTransition(
+                                            child: AltProfile(
+                                              userUid: documentSnapshot
+                                                  .data()['userUid'],
+                                            ),
+                                            type:
+                                                PageTransitionType.bottomToTop),
+                                      );
+                                    }
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 15.0,
+                                    backgroundColor: darkColor,
+                                    backgroundImage: NetworkImage(
+                                        documentSnapshot.data()['userImage']),
+                                  ),
+                                ),
+                                title: Text(
+                                  documentSnapshot.data()['userName'],
+                                  style: TextStyle(
+                                      color: redColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.0),
+                                ),
+                                trailing: Provider.of<Authentication>(context,
+                                                listen: false)
+                                            .getUserUid ==
+                                        documentSnapshot.data()['userUid']
+                                    ? Container(
+                                        width: 0,
+                                        height: 0,
+                                      )
+                                    : MaterialButton(
+                                        color: blueColor,
+                                        child: Text(
+                                          'Follow',
+                                          style: TextStyle(
+                                            color: whiteColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.0,
+                                          ),
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                              );
+                            }).toList(),
+                          );
+                        }
+                      },
+                    )),
+              ],
+            ),
+          );
+        });
   }
 
   showRewards({@required BuildContext context, @required String postId}) {
