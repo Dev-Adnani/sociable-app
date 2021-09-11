@@ -25,10 +25,18 @@ dependencies:
   lottie : ^0.7.0+1
   timeago : ^2.0.30
   nanoid: ^0.1.0
+  flutter_launcher_icons : ^0.8.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path : "assets/icons/appicon.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/icons/appicon.png"
 
 
 flutter:
