@@ -108,7 +108,7 @@ class Authentication with ChangeNotifier {
 
       Provider.of<FirebaseNotifier>(context, listen: false)
           .createUserCollection(context, {
-        'useruid': userUid,
+        'userUid': userUid,
         'userEmail': user.email,
         'userName': user.displayName,
         'userImage': user.photoURL,
@@ -145,7 +145,7 @@ class Authentication with ChangeNotifier {
 
       Provider.of<FirebaseNotifier>(context, listen: false)
           .createUserCollection(context, {
-        'useruid': userUid,
+        'userUid': userUid,
         'userEmail': user.email,
         'userName': user.displayName,
         'userImage': user.photoURL,
