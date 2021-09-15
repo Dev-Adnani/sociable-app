@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
@@ -62,7 +63,7 @@ class PostFunctions with ChangeNotifier {
                               builder: (context) {
                                 return Container(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.3,
+                                      MediaQuery.of(context).size.height * 0.1,
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
                                     color: blueGreyColor,
@@ -99,7 +100,7 @@ class PostFunctions with ChangeNotifier {
                                         FloatingActionButton(
                                           backgroundColor: redColor,
                                           child: Icon(
-                                            FontAwesomeIcons.fileUpload,
+                                            EvaIcons.uploadOutline,
                                             color: greenColor,
                                           ),
                                           onPressed: () async {
@@ -111,10 +112,16 @@ class PostFunctions with ChangeNotifier {
                                                   .updateCaption(
                                                       postId: postId,
                                                       data: {
-                                                    'caption':
-                                                        editCaptionController
-                                                            .text
-                                                  }).whenComplete(() {
+                                                        'caption':
+                                                            editCaptionController
+                                                                .text
+                                                      },
+                                                      userUid: Provider.of<
+                                                                  Authentication>(
+                                                              context,
+                                                              listen: false)
+                                                          .getUserUid)
+                                                  .whenComplete(() {
                                                 Navigator.pop(context);
                                               });
                                             } else {
@@ -178,7 +185,13 @@ class PostFunctions with ChangeNotifier {
                                         Provider.of<FirebaseNotifier>(context,
                                                 listen: false)
                                             .deleteUserPost(
-                                                id: postId, collection: 'posts')
+                                                id: postId,
+                                                collection: 'posts',
+                                                userUid:
+                                                    Provider.of<Authentication>(
+                                                            context,
+                                                            listen: false)
+                                                        .getUserUid)
                                             .whenComplete(() {
                                           Navigator.pop(context);
                                         });
@@ -260,10 +273,11 @@ class PostFunctions with ChangeNotifier {
     });
   }
 
-  showCommentSheet(
-      {@required BuildContext context,
-      @required DocumentSnapshot snapshot,
-      @required String docId}) {
+  showCommentSheet({
+    @required BuildContext context,
+    @required DocumentSnapshot snapshot,
+    @required String docId,
+  }) {
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -330,7 +344,7 @@ class PostFunctions with ChangeNotifier {
                                 .map((DocumentSnapshot documentSnapshot) {
                               return Container(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.15,
+                                    MediaQuery.of(context).size.height * 0.10,
                                 width: MediaQuery.of(context).size.width,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -379,42 +393,10 @@ class PostFunctions with ChangeNotifier {
                                             style: TextStyle(
                                               color: whiteColor,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 18.0,
+                                              fontSize: 14.0,
                                             ),
                                           )),
                                         ),
-                                        Container(
-                                          child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: Row(
-                                              children: [
-                                                IconButton(
-                                                    icon: Icon(
-                                                      FontAwesomeIcons.arrowUp,
-                                                      size: 12,
-                                                      color: blueColor,
-                                                    ),
-                                                    onPressed: () {}),
-                                                Text(
-                                                  '0',
-                                                  style: TextStyle(
-                                                    color: whiteColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14.0,
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                    icon: Icon(
-                                                      FontAwesomeIcons.reply,
-                                                      color: yellowColor,
-                                                      size: 12,
-                                                    ),
-                                                    onPressed: () {}),
-                                              ],
-                                            ),
-                                          ),
-                                        )
                                       ],
                                     ),
                                     Container(
@@ -426,7 +408,7 @@ class PostFunctions with ChangeNotifier {
                                                 Icons
                                                     .arrow_forward_ios_outlined,
                                                 color: blueColor,
-                                                size: 12,
+                                                size: 22,
                                               ),
                                               onPressed: () {}),
                                           Container(
@@ -440,17 +422,100 @@ class PostFunctions with ChangeNotifier {
                                               style: TextStyle(
                                                 color: whiteColor,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,
+                                                fontSize: 14.0,
                                               ),
                                             ),
                                           ),
-                                          IconButton(
-                                              icon: Icon(
-                                                FontAwesomeIcons.trash,
-                                                color: redColor,
-                                                size: 15,
-                                              ),
-                                              onPressed: () {}),
+                                          Provider.of<Authentication>(context,
+                                                          listen: false)
+                                                      .getUserUid ==
+                                                  documentSnapshot
+                                                      .data()['userUid']
+                                              ? IconButton(
+                                                  icon: Icon(
+                                                    FontAwesomeIcons.trash,
+                                                    color: redColor,
+                                                    size: 18,
+                                                  ),
+                                                  onPressed: () {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return AlertDialog(
+                                                            backgroundColor:
+                                                                darkColor,
+                                                            title: Text(
+                                                              'Delete The Comment',
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  fontSize:
+                                                                      16.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                            actions: [
+                                                              MaterialButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child: Text(
+                                                                  'No',
+                                                                  style: TextStyle(
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .underline,
+                                                                      color:
+                                                                          whiteColor,
+                                                                      fontSize:
+                                                                          16.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                              ),
+                                                              MaterialButton(
+                                                                color: redColor,
+                                                                onPressed: () {
+                                                                  Provider.of<FirebaseNotifier>(
+                                                                          context,
+                                                                          listen:
+                                                                              false)
+                                                                      .deleteUserComment(
+                                                                    cmtId: documentSnapshot
+                                                                            .data()[
+                                                                        'commentId'],
+                                                                    postId:
+                                                                        docId,
+                                                                  )
+                                                                      .whenComplete(
+                                                                          () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  });
+                                                                },
+                                                                child: Text(
+                                                                  'Yes',
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          whiteColor,
+                                                                      fontSize:
+                                                                          16.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        });
+                                                  })
+                                              : Container(
+                                                  width: 0,
+                                                  height: 0,
+                                                )
                                         ],
                                       ),
                                     ),

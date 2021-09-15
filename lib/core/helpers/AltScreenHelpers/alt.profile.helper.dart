@@ -9,6 +9,7 @@ import 'package:social_tower/core/services/authentication.notifier.dart';
 import 'package:social_tower/core/services/firebase.notifier.dart';
 import 'package:social_tower/meta/screen/AltProfileScreen/alt.profile.screen.dart';
 import 'package:social_tower/meta/screen/Homescreen/home.screen.dart';
+import 'package:social_tower/core/utils/posts.functions.dart';
 
 class AltProfileHelper with ChangeNotifier {
   Widget appBar(BuildContext context) {
@@ -401,13 +402,17 @@ class AltProfileHelper with ChangeNotifier {
                                 child: CircularProgressIndicator(),
                               );
                             } else {
-                              return new Container(
-                                height: 60.0,
-                                width: 60.0,
-                                child: GestureDetector(
-                                  onTap: () {},
-                                  child: Image.network(
-                                    documentSnapshot.data()['userImage'],
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: new Container(
+                                  height: 60.0,
+                                  width: 60.0,
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          documentSnapshot.data()['userImage']),
+                                    ),
                                   ),
                                 ),
                               );
@@ -437,13 +442,50 @@ class AltProfileHelper with ChangeNotifier {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.5,
+        height: MediaQuery.of(context).size.height * 0.4,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: darkColor.withOpacity(0.4),
           borderRadius: BorderRadius.circular(5.0),
         ),
-        child: Image.asset('assets/images/empty.png'),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(snapshot.data['userUid'])
+                .collection('posts')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return new GridView(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                    ),
+                    children:
+                        snapshot.data.docs.map((DocumentSnapshot snapshot) {
+                      return GestureDetector(
+                        onTap: () {
+                          showPostDetails(
+                              context: context, documentSnapshot: snapshot);
+                        },
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * .8,
+                          width: MediaQuery.of(context).size.width,
+                          child: FittedBox(
+                            child: Image.network(snapshot['postImage']),
+                          ),
+                        ),
+                      );
+                    }).toList());
+              }
+            },
+          ),
+        ),
       ),
     );
   }
@@ -641,6 +683,259 @@ class AltProfileHelper with ChangeNotifier {
                   );
                 }
               },
+            ),
+          );
+        });
+  }
+
+  showPostDetails({BuildContext context, DocumentSnapshot documentSnapshot}) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.63,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: darkColor,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  width: MediaQuery.of(context).size.width,
+                  child: FittedBox(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 32.0),
+                      child:
+                          Image.network(documentSnapshot.data()['postImage']),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  documentSnapshot.data()['caption'],
+                  style: TextStyle(
+                    color: whiteColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 72.0),
+                        child: Container(
+                          height: 40,
+                          width: 80,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onLongPress: () {
+                                  Provider.of<PostFunctions>(context,
+                                          listen: false)
+                                      .showLikes(
+                                          context: context,
+                                          postId: documentSnapshot
+                                              .data()['postId']);
+                                },
+                                onTap: () {
+                                  print('Added Like');
+                                  Provider.of<PostFunctions>(context,
+                                          listen: false)
+                                      .addLike(
+                                          context: context,
+                                          postId:
+                                              documentSnapshot.data()['postId'],
+                                          subDocId: Provider.of<Authentication>(
+                                                  context,
+                                                  listen: false)
+                                              .getUserUid);
+                                },
+                                child: Icon(
+                                  FontAwesomeIcons.heart,
+                                  color: redColor,
+                                  size: 22,
+                                ),
+                              ),
+                              StreamBuilder<QuerySnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('posts')
+                                    .doc(documentSnapshot.data()['postId'])
+                                    .collection('likes')
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else {
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
+                                      child: Text(
+                                        snapshot.data.docs.length.toString(),
+                                        style: TextStyle(
+                                          color: whiteColor,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 40,
+                        width: 80,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                Provider.of<PostFunctions>(context,
+                                        listen: false)
+                                    .showCommentSheet(
+                                        context: context,
+                                        snapshot: documentSnapshot,
+                                        docId:
+                                            documentSnapshot.data()['postId']);
+                              },
+                              child: Icon(
+                                FontAwesomeIcons.comment,
+                                color: yellowColor,
+                                size: 22,
+                              ),
+                            ),
+                            StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('posts')
+                                  .doc(documentSnapshot.data()['postId'])
+                                  .collection('comments')
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      snapshot.data.docs.length.toString(),
+                                      style: TextStyle(
+                                        color: whiteColor,
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 80,
+                        height: 40,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onLongPress: () {
+                                  Provider.of<PostFunctions>(context,
+                                          listen: false)
+                                      .showAwardsPresenter(
+                                          context: context,
+                                          postId: documentSnapshot
+                                              .data()['postId']);
+                                },
+                                onTap: () {
+                                  Provider.of<PostFunctions>(context,
+                                          listen: false)
+                                      .showRewards(
+                                          context: context,
+                                          postId: documentSnapshot
+                                              .data()['postId']);
+                                },
+                                child: Icon(
+                                  FontAwesomeIcons.award,
+                                  color: greenColor,
+                                  size: 22,
+                                ),
+                              ),
+                              StreamBuilder<QuerySnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('posts')
+                                    .doc(documentSnapshot.data()['postId'])
+                                    .collection('awards')
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text(
+                                        snapshot.data.docs.length.toString(),
+                                        style: TextStyle(
+                                          color: whiteColor,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Spacer(),
+                      Provider.of<Authentication>(context, listen: false)
+                                  .getUserUid ==
+                              documentSnapshot.data()['userUid']
+                          ? IconButton(
+                              icon: Icon(EvaIcons.moreVertical,
+                                  color: whiteColor),
+                              onPressed: () {
+                                Provider.of<PostFunctions>(context,
+                                        listen: false)
+                                    .showPostOptionMethod(
+                                        context: context,
+                                        postId:
+                                            documentSnapshot.data()['postId']);
+                              },
+                            )
+                          : Container(
+                              width: 0.0,
+                              height: 0.0,
+                            ),
+                    ],
+                  ),
+                )
+              ],
             ),
           );
         });

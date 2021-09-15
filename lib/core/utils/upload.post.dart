@@ -27,7 +27,6 @@ class UploadPost with ChangeNotifier {
     uploadPostImageVal == null
         ? print('Select Image')
         : uploastPostImage = File(uploadPostImageVal.path);
-    print(uploadPostImageVal.path);
 
     uploastPostImage != null ? showPostImage(context) : print('Error');
     notifyListeners();
@@ -207,31 +206,16 @@ class UploadPost with ChangeNotifier {
                 ),
                 Container(
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        child: Column(
-                          children: [
-                            IconButton(
-                                icon: Icon(
-                                  Icons.image_aspect_ratio,
-                                  color: greenColor,
-                                ),
-                                onPressed: () {}),
-                            IconButton(
-                                icon: Icon(
-                                  Icons.fit_screen,
-                                  color: yellowColor,
-                                ),
-                                onPressed: () {})
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 200.0,
-                        width: 300.0,
-                        child: Image.file(
-                          uploastPostImage,
-                          fit: BoxFit.contain,
+                      Center(
+                        child: Container(
+                          height: 200.0,
+                          width: 300.0,
+                          child: Image.file(
+                            uploastPostImage,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       )
                     ],
@@ -309,6 +293,33 @@ class UploadPost with ChangeNotifier {
                         'userEmail': Provider.of<FirebaseNotifier>(context,
                                 listen: false)
                             .getInitUserEmail,
+                      }).whenComplete(() async {
+                        // Add Data User To User Profile
+                        return FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(Provider.of<Authentication>(context,
+                                    listen: false)
+                                .getUserUid)
+                            .collection('posts')
+                            .doc(randomID)
+                            .set({
+                          'postId': randomID,
+                          'postImage': getUploadPostImageUrl,
+                          'caption': captionController.text,
+                          'userName': Provider.of<FirebaseNotifier>(context,
+                                  listen: false)
+                              .getInitUserName,
+                          'userImage': Provider.of<FirebaseNotifier>(context,
+                                  listen: false)
+                              .getInitUserImage,
+                          'userUid': Provider.of<Authentication>(context,
+                                  listen: false)
+                              .getUserUid,
+                          'time': Timestamp.now(),
+                          'userEmail': Provider.of<FirebaseNotifier>(context,
+                                  listen: false)
+                              .getInitUserEmail,
+                        });
                       }).whenComplete(() {
                         Navigator.pop(context);
                         Navigator.pop(context);

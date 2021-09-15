@@ -67,15 +67,51 @@ class FirebaseNotifier with ChangeNotifier {
   }
 
   Future deleteUserPost(
-      {@required String id, @required dynamic collection}) async {
-    return FirebaseFirestore.instance.collection(collection).doc(id).delete();
+      {@required String id,
+      @required dynamic collection,
+      @required String userUid}) async {
+    return FirebaseFirestore.instance
+        .collection(collection)
+        .doc(id)
+        .delete()
+        .whenComplete(() {
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(userUid)
+          .collection('posts')
+          .doc(id)
+          .delete();
+    });
   }
 
-  Future updateCaption({@required String postId, @required dynamic data}) {
+  Future deleteUserComment({
+    @required String cmtId,
+    @required String postId,
+  }) async {
     return FirebaseFirestore.instance
         .collection('posts')
         .doc(postId)
-        .update(data);
+        .collection('comments')
+        .doc(cmtId)
+        .delete();
+  }
+
+  Future updateCaption(
+      {@required String postId,
+      @required dynamic data,
+      @required String userUid}) {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .update(data)
+        .whenComplete(() {
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(userUid)
+          .collection('posts')
+          .doc(postId)
+          .update(data);
+    });
   }
 
   Future followUser(
