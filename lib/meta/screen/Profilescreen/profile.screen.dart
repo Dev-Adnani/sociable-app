@@ -3,7 +3,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
-import 'package:social_tower/core/helpers/ProfileHelpers/profile.helpers.dart';
+import 'package:social_tower/core/helpers/ProfileHelper/profile.helper.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 
 class ProfileScreen extends StatelessWidget {

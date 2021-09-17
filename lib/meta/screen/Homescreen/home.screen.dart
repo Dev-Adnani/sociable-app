@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
-import 'package:social_tower/core/helpers/HomeScreenHelpers/homePage.helpers.dart';
+import 'package:social_tower/core/helpers/HomeScreenHelper/homePage.helper.dart';
 import 'package:social_tower/core/services/firebase.notifier.dart';
 import 'package:social_tower/meta/screen/Chatscreen/chat.screen.dart';
 import 'package:social_tower/meta/screen/Feedscreen/feed.screen.dart';
@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: homePageController,
         children: [
           FeedScreen(),
-          ChatScreen(),
+          ChatRoomScreen(),
           ProfileScreen(),
         ],
         physics: NeverScrollableScrollPhysics(),

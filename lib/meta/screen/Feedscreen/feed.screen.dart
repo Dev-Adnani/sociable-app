@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
-import 'package:social_tower/core/helpers/FeedHelpers/feed.helpers.dart';
+import 'package:social_tower/core/helpers/FeedHelper/feed.helper.dart';
 
 class FeedScreen extends StatelessWidget {
   const FeedScreen({Key key}) : super(key: key);
