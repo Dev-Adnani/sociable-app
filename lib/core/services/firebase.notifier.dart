@@ -147,16 +147,16 @@ class FirebaseNotifier with ChangeNotifier {
         .set(chatRoomData);
   }
 
-  Future deleteMessage({
-    @required String messageID,
-    @required String roomID,
-  }) {
+  Future deleteMessage(
+      {@required String messageID,
+      @required String roomID,
+      @required dynamic data}) {
     return FirebaseFirestore.instance
         .collection('chatroom')
         .doc(roomID)
         .collection('messages')
         .doc(messageID)
-        .delete();
+        .update(data);
   }
 
   Future updateMessage({

@@ -6,6 +6,7 @@ import 'package:social_tower/app/constants/constant.colors.dart';
 import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 import 'package:social_tower/core/services/firebase.notifier.dart';
+import 'package:nanoid/nanoid.dart';
 
 class GroupMessageHelper extends ChangeNotifier {
   final TextEditingController editMessageController = TextEditingController();
@@ -281,7 +282,11 @@ class GroupMessageHelper extends ChangeNotifier {
                                             .deleteMessage(
                                                 messageID: documentSnapshot.id,
                                                 roomID: documentSnapshots
-                                                    .data()['roomID']);
+                                                    .data()['roomID'],
+                                                data: {
+                                              'message': 'Message Deleted',
+                                              'messageEdited': 0
+                                            });
                                       },
                                     )
                                   ],
@@ -322,11 +327,14 @@ class GroupMessageHelper extends ChangeNotifier {
       {@required BuildContext context,
       @required DocumentSnapshot documentSnapshot,
       @required TextEditingController messageController}) {
+    var randomID = nanoid(5);
     return FirebaseFirestore.instance
         .collection('chatroom')
         .doc(documentSnapshot.id)
         .collection('messages')
-        .add({
+        .doc(randomID)
+        .set({
+      'messageID': randomID,
       'message': messageController.text,
       'messageEdited': 0,
       'time': Timestamp.now(),
