@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
 import 'package:social_tower/core/helpers/GroupmessageHelper/group.message.helper.dart';
-import 'package:social_tower/core/helpers/LandingHelpers/landing.notifier.dart';
 import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 
@@ -99,7 +98,7 @@ class GroupMessage extends StatelessWidget {
                 child: Provider.of<GroupMessageHelper>(context, listen: false)
                     .showMessages(
                         context: context,
-                        documentSnapshot: documentSnapshot,
+                        documentSnapshots: documentSnapshot,
                         adminUserUid: documentSnapshot.data()['userUid']),
               ),
               Padding(

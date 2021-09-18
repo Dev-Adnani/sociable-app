@@ -99,7 +99,7 @@ class FirebaseNotifier with ChangeNotifier {
   Future updateCaption(
       {@required String postId,
       @required dynamic data,
-      @required String userUid}) {
+      @required String userUid}) async {
     return FirebaseFirestore.instance
         .collection('posts')
         .doc(postId)
@@ -145,5 +145,30 @@ class FirebaseNotifier with ChangeNotifier {
         .collection('chatroom')
         .doc(chatRoomID)
         .set(chatRoomData);
+  }
+
+  Future deleteMessage({
+    @required String messageID,
+    @required String roomID,
+  }) {
+    return FirebaseFirestore.instance
+        .collection('chatroom')
+        .doc(roomID)
+        .collection('messages')
+        .doc(messageID)
+        .delete();
+  }
+
+  Future updateMessage({
+    @required String messageID,
+    @required String roomID,
+    @required dynamic data,
+  }) async {
+    return FirebaseFirestore.instance
+        .collection('chatroom')
+        .doc(roomID)
+        .collection('messages')
+        .doc(messageID)
+        .update(data);
   }
 }
