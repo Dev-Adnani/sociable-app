@@ -10,12 +10,16 @@ import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier
 import 'package:social_tower/core/services/authentication.notifier.dart';
 import 'package:social_tower/core/services/firebase.notifier.dart';
 import 'package:nanoid/nanoid.dart';
+import 'package:social_tower/meta/screen/AltProfilescreen/alt.profile.screen.dart';
 import 'package:social_tower/meta/screen/GroupMessagescreen/groupmessage.screen.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ChatroomHelper with ChangeNotifier {
   String chatRoomAvatarUrl, chatroomID;
   String get getChatroomAvatarUrl => chatRoomAvatarUrl;
   String get getChatroomID => chatroomID;
+  String latestMessageTime;
+  String get getLatestMessageTime => latestMessageTime;
 
   final TextEditingController chatroomNameController = TextEditingController();
 
@@ -63,6 +67,54 @@ class ChatroomHelper with ChangeNotifier {
                 Container(
                   height: MediaQuery.of(context).size.height * 0.08,
                   width: MediaQuery.of(context).size.width,
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('chatroom')
+                        .doc(documentSnapshot.data()['roomID'])
+                        .collection('members')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return new ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: snapshot.data.docs
+                              .map((DocumentSnapshot documentSnapshot) {
+                            return GestureDetector(
+                              onTap: () {
+                                if (Provider.of<Authentication>(context,
+                                            listen: false)
+                                        .getUserUid !=
+                                    documentSnapshot.data()['userUid']) {
+                                  Navigator.push(
+                                      context,
+                                      PageTransition(
+                                          child: AltProfile(
+                                              userUid: documentSnapshot
+                                                  .data()['userUid']),
+                                          type:
+                                              PageTransitionType.leftToRight));
+                                }
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 8.0),
+                                child: CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor: darkColor,
+                                  backgroundImage: NetworkImage(
+                                    documentSnapshot.data()['userImage'],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }
+                    },
+                  ),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -93,16 +145,101 @@ class ChatroomHelper with ChangeNotifier {
                           backgroundImage: NetworkImage(
                               documentSnapshot.data()['userImage']),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            documentSnapshot.data()['userName'],
-                            style: TextStyle(
-                              color: whiteColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12.0,
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                documentSnapshot.data()['userName'],
+                                style: TextStyle(
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12.0,
+                                ),
+                              ),
                             ),
-                          ),
+                            documentSnapshot.data()['userUid'] ==
+                                    Provider.of<Authentication>(context,
+                                            listen: false)
+                                        .getUserUid
+                                ? Padding(
+                                    padding: const EdgeInsets.only(left: 16.0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        return showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                backgroundColor: darkColor,
+                                                title: Text(
+                                                  'Are you sure ? You Want To Delete ?',
+                                                  style: TextStyle(
+                                                    color: whiteColor,
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                actions: [
+                                                  MaterialButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text(
+                                                      'No',
+                                                      style: TextStyle(
+                                                          color: whiteColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                          decorationColor:
+                                                              whiteColor,
+                                                          fontSize: 14.0),
+                                                    ),
+                                                  ),
+                                                  MaterialButton(
+                                                    color: redColor,
+                                                    child: Text(
+                                                      'Yes',
+                                                      style: TextStyle(
+                                                          color: whiteColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14.0),
+                                                    ),
+                                                    onPressed: () {
+                                                      FirebaseFirestore.instance
+                                                          .collection(
+                                                              'chatroom')
+                                                          .doc(documentSnapshot
+                                                              .id)
+                                                          .delete()
+                                                          .whenComplete(() {
+                                                        Navigator.pop(context);
+                                                        Navigator.pop(context);
+                                                      });
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            });
+                                      },
+                                      child: Text(
+                                        'Delete Chatroom',
+                                        style: TextStyle(
+                                            color: whiteColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.0),
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    height: 0,
+                                    width: 0,
+                                  ),
+                          ],
                         )
                       ],
                     ),
@@ -253,6 +390,23 @@ class ChatroomHelper with ChangeNotifier {
                                     .getUserUid,
                               },
                             ).whenComplete(() {
+                              var randomMessageID = nanoid(5);
+                              FirebaseFirestore.instance
+                                  .collection('chatroom')
+                                  .doc(randomID)
+                                  .collection('messages')
+                                  .doc(randomMessageID)
+                                  .set({
+                                'messageID': randomID,
+                                'message': 'Welcome To The Group',
+                                'messageEdited': 0,
+                                'time': Timestamp.now(),
+                                'userUid': '0000',
+                                'userName': 'Server',
+                                'userImage':
+                                    'https://firebasestorage.googleapis.com/v0/b/social-tower.appspot.com/o/rewards%2Fappicon.png?alt=media&token=6665f030-1aaa-4ed7-a7c4-2c1b1705b1b3',
+                                'messageDeleted': 0
+                              });
                               Navigator.pop(context);
                             });
                           } else {
@@ -302,6 +456,32 @@ class ChatroomHelper with ChangeNotifier {
                   showChatroomDetails(
                       context: context, documentSnapshot: documentSnapshot);
                 },
+                trailing: Container(
+                  width: 80.0,
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('chatroom')
+                        .doc(documentSnapshot.id)
+                        .collection('messages')
+                        .orderBy('time', descending: true)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      showLastMessageTime(
+                          snapshot.data.docs.first.data()['time']);
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else {
+                        return Text(
+                          getLatestMessageTime,
+                          style: TextStyle(
+                              color: whiteColor,
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.bold),
+                        );
+                      }
+                    },
+                  ),
+                ),
                 leading: CircleAvatar(
                   backgroundColor: transperant,
                   backgroundImage:
@@ -311,22 +491,51 @@ class ChatroomHelper with ChangeNotifier {
                   documentSnapshot.data()['roomName'],
                   style: TextStyle(
                       color: whiteColor,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold),
-                ),
-                trailing: Text(
-                  '2 Hours Ago',
-                  style: TextStyle(
-                      color: redColor,
-                      fontSize: 10.0,
-                      fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  'Last Message',
-                  style: TextStyle(
-                      color: greenColor,
                       fontSize: 14.0,
                       fontWeight: FontWeight.bold),
+                ),
+                subtitle: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('chatroom')
+                      .doc(documentSnapshot.id)
+                      .collection('messages')
+                      .orderBy('time', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.data.docs.first.data()['userName'] !=
+                            null &&
+                        snapshot.data.docs.first.data()['message'] != null) {
+                      return Text(
+                        '${snapshot.data.docs.first.data()['userName']} : ${snapshot.data.docs.first.data()['message']}',
+                        style: TextStyle(
+                            color: greenColor,
+                            fontSize: 10.0,
+                            fontWeight: FontWeight.bold),
+                      );
+                    } else if (snapshot.data.docs.first.data()['userName'] !=
+                            null &&
+                        snapshot.data.docs.first.data()['sticker'] != null) {
+                      return Text(
+                        '${snapshot.data.docs.first.data()['userName']} : Sticker',
+                        style: TextStyle(
+                            color: greenColor,
+                            fontSize: 10.0,
+                            fontWeight: FontWeight.bold),
+                      );
+                    } else {
+                      return Text(
+                        'No Message',
+                        style: TextStyle(
+                            color: greenColor,
+                            fontSize: 10.0,
+                            fontWeight: FontWeight.bold),
+                      );
+                    }
+                  },
                 ),
               );
             }).toList(),
@@ -334,5 +543,11 @@ class ChatroomHelper with ChangeNotifier {
         }
       },
     );
+  }
+
+  showLastMessageTime(dynamic timeData) {
+    Timestamp t = timeData;
+    DateTime dateTime = t.toDate();
+    latestMessageTime = timeago.format(dateTime);
   }
 }

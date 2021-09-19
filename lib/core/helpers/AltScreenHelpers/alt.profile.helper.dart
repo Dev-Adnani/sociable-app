@@ -230,12 +230,28 @@ class AltProfileHelper with ChangeNotifier {
                         width: 80.0,
                         child: Column(
                           children: [
-                            Text(
-                              '0',
-                              style: TextStyle(
-                                  color: whiteColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20.0),
+                            StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(snapshot.data.data()['userUid'])
+                                  .collection('posts')
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else {
+                                  return new Text(
+                                    snapshot.data.docs.length.toString(),
+                                    style: TextStyle(
+                                        color: whiteColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20.0),
+                                  );
+                                }
+                              },
                             ),
                             Text(
                               'Posts',

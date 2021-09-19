@@ -1,5 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
@@ -10,6 +11,7 @@ class ChatRoomScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: darkColor.withOpacity(0.6),

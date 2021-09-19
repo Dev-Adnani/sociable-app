@@ -17,10 +17,10 @@ import 'package:social_tower/core/services/firebase.notifier.dart';
 List<SingleChildWidget> providers = [...remoteProviders];
 
 List<SingleChildWidget> remoteProviders = [
-  ChangeNotifierProvider(create: (_) => LandingNotifier()),
   ChangeNotifierProvider(create: (_) => Authentication()),
-  ChangeNotifierProvider(create: (_) => LandingService()),
+  ChangeNotifierProvider(create: (_) => LandingNotifier()),
   ChangeNotifierProvider(create: (_) => FirebaseNotifier()),
+  ChangeNotifierProvider(create: (_) => LandingService()),
   ChangeNotifierProvider(create: (_) => LandingUtils()),
   ChangeNotifierProvider(create: (_) => HomePageHelpers()),
   ChangeNotifierProvider(create: (_) => ProfileHelpers()),

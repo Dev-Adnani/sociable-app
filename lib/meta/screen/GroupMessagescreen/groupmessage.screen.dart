@@ -1,36 +1,73 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
 import 'package:social_tower/core/helpers/GroupmessageHelper/group.message.helper.dart';
 import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 
-class GroupMessage extends StatelessWidget {
+class GroupMessage extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final TextEditingController messageController = TextEditingController();
+
   GroupMessage({Key key, @required this.documentSnapshot}) : super(key: key);
+
+  @override
+  _GroupMessageState createState() => _GroupMessageState();
+}
+
+class _GroupMessageState extends State<GroupMessage> {
+  final TextEditingController messageController = TextEditingController();
+
+  @override
+  void initState() {
+    FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+    Provider.of<GroupMessageHelper>(context, listen: false)
+        .checkIfJoined(
+            context: context,
+            chatRoomName: widget.documentSnapshot.id,
+            chatRoomAdminUid: widget.documentSnapshot.data()['userUid'])
+        .whenComplete(() async {
+      if (Provider.of<GroupMessageHelper>(context, listen: false)
+              .getHasMemberJoined ==
+          false) {
+        Timer(
+            Duration(milliseconds: 10),
+            () => Provider.of<GroupMessageHelper>(context, listen: false)
+                .askToJoin(
+                    context: context,
+                    roomName: widget.documentSnapshot.data()['roomName'],
+                    roomId: widget.documentSnapshot.id));
+      }
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: darkColor,
       appBar: AppBar(
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              EvaIcons.logOutOutline,
-              color: redColor,
-            ),
-          ),
-          Provider.of<Authentication>(context, listen: false).getUserUid ==
-                  documentSnapshot.data()['userUid']
+          Provider.of<Authentication>(context, listen: false).getUserUid !=
+                  widget.documentSnapshot.data()['userUid']
               ? IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Provider.of<GroupMessageHelper>(context, listen: false)
+                        .leaveTheRoom(
+                            context: context,
+                            chatRoomName:
+                                widget.documentSnapshot.data()['roomName'],
+                            chatRoomID:
+                                widget.documentSnapshot.data()['roomID']);
+                  },
                   icon: Icon(
-                    EvaIcons.moreVertical,
-                    color: whiteColor,
+                    EvaIcons.logOutOutline,
+                    color: redColor,
                   ),
                 )
               : Container(
@@ -55,7 +92,7 @@ class GroupMessage extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: transperant,
                 backgroundImage:
-                    NetworkImage(documentSnapshot.data()['roomAvatar']),
+                    NetworkImage(widget.documentSnapshot.data()['roomAvatar']),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
@@ -64,20 +101,36 @@ class GroupMessage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      documentSnapshot.data()['roomName'],
+                      widget.documentSnapshot.data()['roomName'],
                       style: TextStyle(
                         color: whiteColor,
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      '2 Members',
-                      style: TextStyle(
-                        color: greenColor.withOpacity(0.5),
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('chatroom')
+                          .doc(widget.documentSnapshot.id)
+                          .collection('members')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else {
+                          return new Text(
+                            '${snapshot.data.docs.length.toString()} members',
+                            style: TextStyle(
+                              color: greenColor.withOpacity(0.5),
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        }
+                      },
                     )
                   ],
                 ),
@@ -98,8 +151,9 @@ class GroupMessage extends StatelessWidget {
                 child: Provider.of<GroupMessageHelper>(context, listen: false)
                     .showMessages(
                         context: context,
-                        documentSnapshots: documentSnapshot,
-                        adminUserUid: documentSnapshot.data()['userUid']),
+                        documentSnapshots: widget.documentSnapshot,
+                        adminUserUid:
+                            widget.documentSnapshot.data()['userUid']),
               ),
               Padding(
                 padding: EdgeInsets.only(
@@ -108,6 +162,14 @@ class GroupMessage extends StatelessWidget {
                   child: Row(
                     children: [
                       GestureDetector(
+                        onTap: () {
+                          Provider.of<GroupMessageHelper>(context,
+                                  listen: false)
+                              .showStickers(
+                                  context: context,
+                                  chatRoomId:
+                                      widget.documentSnapshot.data()['roomID']);
+                        },
                         child: Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: CircleAvatar(
@@ -152,7 +214,7 @@ class GroupMessage extends StatelessWidget {
                                       listen: false)
                                   .sendMessage(
                                       context: context,
-                                      documentSnapshot: documentSnapshot,
+                                      documentSnapshot: widget.documentSnapshot,
                                       messageController: messageController);
                               messageController.clear();
                             } else {
