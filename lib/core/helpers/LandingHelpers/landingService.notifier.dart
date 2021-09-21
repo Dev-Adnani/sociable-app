@@ -106,7 +106,7 @@ class LandingService with ChangeNotifier {
         builder: (context) {
           return Padding(
             padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.horizontal * 0.2),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.30,
               width: MediaQuery.of(context).size.width,
@@ -170,6 +170,9 @@ class LandingService with ChangeNotifier {
                                     context: context)
                                 .then((value) {
                               if (value) {
+                                userEmailController.clear();
+                                userPasswordController.clear();
+                                userNameController.clear();
                                 if (Provider.of<Authentication>(context,
                                         listen: false)
                                     .isVerified) {
@@ -239,7 +242,7 @@ class LandingService with ChangeNotifier {
         builder: (context) {
           return Padding(
             padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.horizontal * 0.3),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.5,
               width: MediaQuery.of(context).size.width,
@@ -371,6 +374,10 @@ class LandingService with ChangeNotifier {
                                           listen: false)
                                       .getUserAvatarUrl,
                                   'userPassword': userPasswordController.text,
+                                }).whenComplete(() {
+                                  userEmailController.clear();
+                                  userPasswordController.clear();
+                                  userNameController.clear();
                                 });
                               } else {
                                 warningText(
@@ -447,7 +454,7 @@ class LandingService with ChangeNotifier {
         builder: (context) {
           return Padding(
             padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.horizontal * 0.2),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.25,
               width: MediaQuery.of(context).size.width,
@@ -492,6 +499,9 @@ class LandingService with ChangeNotifier {
                                     context: context)
                                 .then((value) {
                               if (value) {
+                                userEmailController.clear();
+                                userPasswordController.clear();
+                                userNameController.clear();
                                 warningText(
                                     context, 'Please Check Your Mail ID', 12.0);
                               } else {

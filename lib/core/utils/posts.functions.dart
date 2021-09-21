@@ -84,13 +84,16 @@ class PostFunctions with ChangeNotifier {
                                             padding: const EdgeInsets.only(
                                                 left: 12.0),
                                             child: TextField(
-                                                maxLines: 5,
-                            textCapitalization: TextCapitalization.words,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(100)
-                            ],
-                            maxLength: 100,
-                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                                              maxLines: 5,
+                                              textCapitalization:
+                                                  TextCapitalization.words,
+                                              inputFormatters: [
+                                                LengthLimitingTextInputFormatter(
+                                                    100)
+                                              ],
+                                              maxLength: 100,
+                                              maxLengthEnforcement:
+                                                  MaxLengthEnforcement.enforced,
                                               controller: editCaptionController,
                                               decoration: InputDecoration(
                                                 hintText: 'Edit your Caption',
@@ -291,317 +294,329 @@ class PostFunctions with ChangeNotifier {
         context: context,
         isScrollControlled: true,
         builder: (context) {
-          return SingleChildScrollView(
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.75,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                color: blueGreyColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12.0),
-                  topRight: Radius.circular(12.0),
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 150.0),
-                    child: Divider(
-                      thickness: 4.0,
-                      color: whiteColor,
-                    ),
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: SingleChildScrollView(
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.60,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: blueGreyColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12.0),
+                    topRight: Radius.circular(12.0),
                   ),
-                  Container(
-                    width: 110,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: whiteColor),
-                      borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                      child: Divider(
+                        thickness: 4.0,
+                        color: whiteColor,
+                      ),
                     ),
-                    child: Center(
-                      child: Text(
-                        'Comments',
-                        style: TextStyle(
-                          color: blueColor,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
+                    Container(
+                      width: 110,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: whiteColor),
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Comments',
+                          style: TextStyle(
+                            color: blueColor,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.62,
-                    width: MediaQuery.of(context).size.width,
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('posts')
-                          .doc(docId)
-                          .collection('comments')
-                          .orderBy('time')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else {
-                          return new ListView(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            children: snapshot.data.docs
-                                .map((DocumentSnapshot documentSnapshot) {
-                              return Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.10,
-                                width: MediaQuery.of(context).size.width,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            if (documentSnapshot
-                                                    .data()['userUid'] !=
-                                                Provider.of<Authentication>(
-                                                        context,
-                                                        listen: false)
-                                                    .getUserUid) {
-                                              Navigator.pushReplacement(
-                                                context,
-                                                PageTransition(
-                                                    child: AltProfile(
-                                                      userUid: documentSnapshot
-                                                          .data()['userUid'],
-                                                    ),
-                                                    type: PageTransitionType
-                                                        .bottomToTop),
-                                              );
-                                            }
-                                          },
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 8.0, left: 10.0),
-                                            child: CircleAvatar(
-                                              backgroundColor: darkColor,
-                                              radius: 14,
-                                              backgroundImage: NetworkImage(
-                                                  documentSnapshot
-                                                      .data()['userImage']),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.46,
+                      width: MediaQuery.of(context).size.width,
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('posts')
+                            .doc(docId)
+                            .collection('comments')
+                            .orderBy('time')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return new ListView(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              children: snapshot.data.docs
+                                  .map((DocumentSnapshot documentSnapshot) {
+                                return Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.10,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (documentSnapshot
+                                                      .data()['userUid'] !=
+                                                  Provider.of<Authentication>(
+                                                          context,
+                                                          listen: false)
+                                                      .getUserUid) {
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  PageTransition(
+                                                      child: AltProfile(
+                                                        userUid:
+                                                            documentSnapshot
+                                                                    .data()[
+                                                                'userUid'],
+                                                      ),
+                                                      type: PageTransitionType
+                                                          .bottomToTop),
+                                                );
+                                              }
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 8.0, left: 10.0),
+                                              child: CircleAvatar(
+                                                backgroundColor: darkColor,
+                                                radius: 14,
+                                                backgroundImage: NetworkImage(
+                                                    documentSnapshot
+                                                        .data()['userImage']),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 12.0, top: 8.0),
-                                          child: Container(
-                                              child: Text(
-                                            documentSnapshot.data()['userName'],
-                                            style: TextStyle(
-                                              color: whiteColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14.0,
-                                            ),
-                                          )),
-                                        ),
-                                      ],
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      child: Row(
-                                        children: [
-                                          IconButton(
-                                              icon: Icon(
-                                                Icons
-                                                    .arrow_forward_ios_outlined,
-                                                color: blueColor,
-                                                size: 22,
-                                              ),
-                                              onPressed: () {}),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.75,
-                                            child: Text(
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 12.0, top: 8.0),
+                                            child: Container(
+                                                child: Text(
                                               documentSnapshot
-                                                  .data()['comment'],
+                                                  .data()['userName'],
                                               style: TextStyle(
                                                 color: whiteColor,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 14.0,
                                               ),
-                                            ),
+                                            )),
                                           ),
-                                          Provider.of<Authentication>(context,
-                                                          listen: false)
-                                                      .getUserUid ==
-                                                  documentSnapshot
-                                                      .data()['userUid']
-                                              ? IconButton(
-                                                  icon: Icon(
-                                                    FontAwesomeIcons.trash,
-                                                    color: redColor,
-                                                    size: 18,
-                                                  ),
-                                                  onPressed: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return AlertDialog(
-                                                            backgroundColor:
-                                                                darkColor,
-                                                            title: Text(
-                                                              'Delete The Comment',
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      whiteColor,
-                                                                  fontSize:
-                                                                      16.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-                                                            actions: [
-                                                              MaterialButton(
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Text(
-                                                                  'No',
-                                                                  style: TextStyle(
-                                                                      decoration:
-                                                                          TextDecoration
-                                                                              .underline,
-                                                                      color:
-                                                                          whiteColor,
-                                                                      fontSize:
-                                                                          16.0,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                              ),
-                                                              MaterialButton(
-                                                                color: redColor,
-                                                                onPressed: () {
-                                                                  Provider.of<FirebaseNotifier>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .deleteUserComment(
-                                                                    cmtId: documentSnapshot
-                                                                            .data()[
-                                                                        'commentId'],
-                                                                    postId:
-                                                                        docId,
-                                                                  )
-                                                                      .whenComplete(
-                                                                          () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  });
-                                                                },
-                                                                child: Text(
-                                                                  'Yes',
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          whiteColor,
-                                                                      fontSize:
-                                                                          16.0,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        });
-                                                  })
-                                              : Container(
-                                                  width: 0,
-                                                  height: 0,
-                                                )
                                         ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        }
-                      },
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: Row(
+                                          children: [
+                                            IconButton(
+                                                icon: Icon(
+                                                  Icons
+                                                      .arrow_forward_ios_outlined,
+                                                  color: blueColor,
+                                                  size: 22,
+                                                ),
+                                                onPressed: () {}),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.75,
+                                              child: Text(
+                                                documentSnapshot
+                                                    .data()['comment'],
+                                                style: TextStyle(
+                                                  color: whiteColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14.0,
+                                                ),
+                                              ),
+                                            ),
+                                            Provider.of<Authentication>(context,
+                                                            listen: false)
+                                                        .getUserUid ==
+                                                    documentSnapshot
+                                                        .data()['userUid']
+                                                ? IconButton(
+                                                    icon: Icon(
+                                                      FontAwesomeIcons.trash,
+                                                      color: redColor,
+                                                      size: 18,
+                                                    ),
+                                                    onPressed: () {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return AlertDialog(
+                                                              backgroundColor:
+                                                                  darkColor,
+                                                              title: Text(
+                                                                'Delete The Comment',
+                                                                style: TextStyle(
+                                                                    color:
+                                                                        whiteColor,
+                                                                    fontSize:
+                                                                        16.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                              actions: [
+                                                                MaterialButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  child: Text(
+                                                                    'No',
+                                                                    style: TextStyle(
+                                                                        decoration:
+                                                                            TextDecoration
+                                                                                .underline,
+                                                                        color:
+                                                                            whiteColor,
+                                                                        fontSize:
+                                                                            16.0,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
+                                                                ),
+                                                                MaterialButton(
+                                                                  color:
+                                                                      redColor,
+                                                                  onPressed:
+                                                                      () {
+                                                                    Provider.of<FirebaseNotifier>(
+                                                                            context,
+                                                                            listen:
+                                                                                false)
+                                                                        .deleteUserComment(
+                                                                      cmtId: documentSnapshot
+                                                                              .data()[
+                                                                          'commentId'],
+                                                                      postId:
+                                                                          docId,
+                                                                    )
+                                                                        .whenComplete(
+                                                                            () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    });
+                                                                  },
+                                                                  child: Text(
+                                                                    'Yes',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            whiteColor,
+                                                                        fontSize:
+                                                                            16.0,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          });
+                                                    })
+                                                : Container(
+                                                    width: 0,
+                                                    height: 0,
+                                                  )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                  Container(
-                    width: 400,
-                    height: 50.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          width: 300.0,
-                          height: 20.0,
-                          child: TextField(
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
-                              hintText: 'Add Comment....',
-                              hintStyle: TextStyle(
+                    Container(
+                      width: 400,
+                      height: 50.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            width: 300.0,
+                            height: 20.0,
+                            child: TextField(
+                              textCapitalization: TextCapitalization.sentences,
+                              decoration: InputDecoration(
+                                hintText: 'Add Comment....',
+                                hintStyle: TextStyle(
+                                  color: whiteColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              controller: commentController,
+                              style: TextStyle(
                                 color: whiteColor,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            controller: commentController,
-                            style: TextStyle(
-                              color: whiteColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
                           ),
-                        ),
-                        FloatingActionButton(
-                          backgroundColor: greenColor,
-                          onPressed: () {
-                            if (commentController.text.isNotEmpty) {
-                              print('Adding Comment');
-                              var randomID = nanoid(10);
+                          FloatingActionButton(
+                            backgroundColor: greenColor,
+                            onPressed: () {
+                              if (commentController.text.isNotEmpty) {
+                                print('Adding Comment');
+                                var randomID = nanoid(10);
 
-                              addComment(
-                                commentID: randomID,
-                                context: context,
-                                postId: snapshot.data()['postId'],
-                                comment: commentController.text,
-                              ).whenComplete(() {
-                                commentController.clear();
-                                notifyListeners();
+                                addComment(
+                                  commentID: randomID,
+                                  context: context,
+                                  postId: snapshot.data()['postId'],
+                                  comment: commentController.text,
+                                ).whenComplete(() {
+                                  commentController.clear();
+                                  notifyListeners();
+                                  Provider.of<LandingService>(context,
+                                          listen: false)
+                                      .warningText(context,
+                                          'Comment Added Successfully', 16.0);
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                });
+                              } else {
                                 Provider.of<LandingService>(context,
                                         listen: false)
-                                    .warningText(context,
-                                        'Comment Added Successfully', 16.0);
-                              });
-                            } else {
-                              Provider.of<LandingService>(context,
-                                      listen: false)
-                                  .warningText(
-                                      context,
-                                      'Please Type Something In Order To Comment',
-                                      16.0);
-                            }
-                          },
-                          child: Icon(
-                            FontAwesomeIcons.comment,
-                            color: whiteColor,
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
+                                    .warningText(
+                                        context,
+                                        'Please Type Something In Order To Comment',
+                                        16.0);
+                              }
+                            },
+                            child: Icon(
+                              FontAwesomeIcons.comment,
+                              color: whiteColor,
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           );

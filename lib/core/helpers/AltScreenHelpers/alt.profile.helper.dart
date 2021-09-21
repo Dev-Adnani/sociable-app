@@ -378,7 +378,7 @@ class AltProfileHelper with ChangeNotifier {
   Widget status({BuildContext context, String userUid}) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.only(top: 8.0, left: 40.0, right: 40.0),
+        padding: EdgeInsets.only(left: 40.0, right: 40.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

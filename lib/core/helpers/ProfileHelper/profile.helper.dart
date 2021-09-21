@@ -207,7 +207,7 @@ class ProfileHelpers with ChangeNotifier {
   Widget status({BuildContext context}) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.only(top: 8.0, left: 40.0, right: 40.0),
+        padding: EdgeInsets.only(left: 40.0, right: 40.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -306,7 +306,7 @@ class ProfileHelpers with ChangeNotifier {
                                     backgroundColor: redColor,
                                     child: Icon(
                                       EvaIcons.uploadOutline,
-                                      color: greenColor,
+                                      color: whiteColor,
                                     ),
                                     onPressed: () async {
                                       if (editBioController.text.isNotEmpty) {
