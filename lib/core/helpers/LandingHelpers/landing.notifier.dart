@@ -28,7 +28,7 @@ class LandingNotifier with ChangeNotifier {
         constraints: BoxConstraints(maxWidth: 300.0),
         child: RichText(
           text: TextSpan(
-            text: 'Want ',
+            text: 'Do ',
             style: TextStyle(
                 fontFamily: 'Poppins',
                 color: whiteColor,
@@ -36,7 +36,7 @@ class LandingNotifier with ChangeNotifier {
                 fontSize: 30.0),
             children: [
               TextSpan(
-                text: 'To ',
+                text: 'You ',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     color: redColor,
@@ -44,7 +44,7 @@ class LandingNotifier with ChangeNotifier {
                     fontSize: 34.0),
               ),
               TextSpan(
-                text: 'Climb ',
+                text: 'Want ',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     color: blueColor,
@@ -52,7 +52,7 @@ class LandingNotifier with ChangeNotifier {
                     fontSize: 34.0),
               ),
               TextSpan(
-                text: 'The ',
+                text: 'To ',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     color: yellowColor,
@@ -60,7 +60,7 @@ class LandingNotifier with ChangeNotifier {
                     fontSize: 34.0),
               ),
               TextSpan(
-                text: 'Tower ?',
+                text: 'Sociable ?',
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     color: redColor,
@@ -179,7 +179,7 @@ class LandingNotifier with ChangeNotifier {
         child: Column(
           children: [
             Text(
-              "By continuing you agree Social Tower's",
+              "By continuing you agree Sociable Tower's",
               style: TextStyle(color: Colors.grey.shade600, fontSize: 12.0),
             ),
             Text(

@@ -9,6 +9,7 @@ import 'package:social_tower/core/helpers/LandingHelpers/landing.notifier.dart';
 import 'package:social_tower/core/helpers/LandingHelpers/landing.utlis.dart';
 import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier.dart';
 import 'package:social_tower/core/helpers/ProfileHelper/profile.helper.dart';
+import 'package:social_tower/core/helpers/StoryHelper/story.helper.dart';
 import 'package:social_tower/core/utils/posts.functions.dart';
 import 'package:social_tower/core/utils/upload.post.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
@@ -30,4 +31,5 @@ List<SingleChildWidget> remoteProviders = [
   ChangeNotifierProvider(create: (_) => AltProfileHelper()),
   ChangeNotifierProvider(create: (_) => ChatroomHelper()),
   ChangeNotifierProvider(create: (_) => GroupMessageHelper()),
+  ChangeNotifierProvider(create: (_) => StoriesHelper()),
 ];

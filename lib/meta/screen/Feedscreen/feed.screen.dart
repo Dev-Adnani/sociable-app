@@ -11,7 +11,13 @@ class FeedScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: blueGreyColor,
       appBar: Provider.of<FeedHelpers>(context, listen: false).appBar(context),
-      body: Provider.of<FeedHelpers>(context, listen: false).feedBody(context),
+      body: Stack(
+        children: [
+          Provider.of<FeedHelpers>(context, listen: false)
+              .feedStories(context: context),
+          Provider.of<FeedHelpers>(context, listen: false).feedBody(context)
+        ],
+      ),
     );
   }
 }

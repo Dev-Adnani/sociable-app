@@ -65,12 +65,27 @@ class FeedHelpers with ChangeNotifier {
     );
   }
 
+  Widget feedStories({BuildContext context}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.06,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: darkColor,
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+      ),
+    );
+  }
+
   Widget feedBody(BuildContext context) {
     return SingleChildScrollView(
       physics: NeverScrollableScrollPhysics(),
       scrollDirection: Axis.horizontal,
       child: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
+        padding:
+            EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.08),
         child: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,

@@ -12,10 +12,11 @@ import 'package:social_tower/core/services/firebase.notifier.dart';
 import 'package:social_tower/core/utils/posts.functions.dart';
 import 'package:social_tower/meta/screen/AltProfileScreen/alt.profile.screen.dart';
 import 'package:social_tower/meta/screen/Landingscreen/landing.screen.dart';
+import 'package:social_tower/meta/screen/Stories/stories.widget.dart';
 
 class ProfileHelpers with ChangeNotifier {
+  final StoryWidget storyWidget = StoryWidget();
   TextEditingController editBioController = TextEditingController();
-
   Widget headerProfile(BuildContext context, dynamic snapshot) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.22,
@@ -24,20 +25,33 @@ class ProfileHelpers with ChangeNotifier {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
-            height: 240.0,
-            width: 170.0,
+            height: 220.0,
+            width: MediaQuery.of(context).size.width * 0.45,
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: CircleAvatar(
-                      backgroundColor: transperant,
-                      radius: 60.0,
-                      backgroundImage:
-                          NetworkImage(snapshot.data.data()['userImage']),
-                    ),
+                  onTap: () {
+                    storyWidget.addStory(context);
+                  },
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: CircleAvatar(
+                          backgroundColor: transperant,
+                          radius: 60.0,
+                          backgroundImage:
+                              NetworkImage(snapshot.data.data()['userImage']),
+                        ),
+                      ),
+                      Positioned(
+                          top: 90,
+                          left: 90,
+                          child: Icon(
+                            FontAwesomeIcons.plusCircle,
+                            color: greenColor,
+                          )),
+                    ],
                   ),
                 ),
                 Padding(
