@@ -314,6 +314,7 @@ class AltProfileHelper with ChangeNotifier {
                         .whenComplete(() {
                       followNotification(
                           context: context,
+                          data: 'Follow ',
                           name: snapshot.data.data()['userName']);
                     });
                   },
@@ -327,10 +328,51 @@ class AltProfileHelper with ChangeNotifier {
                   ),
                 ),
                 MaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Provider.of<FirebaseNotifier>(context, listen: false)
+                        .unFollowUser(
+                            followingUid: userUid,
+                            followingDocId: Provider.of<Authentication>(context,
+                                    listen: false)
+                                .getUserUid,
+                            followingData: {
+                              'userName': Provider.of<FirebaseNotifier>(context,
+                                      listen: false)
+                                  .getInitUserName,
+                              'userImage': Provider.of<FirebaseNotifier>(
+                                      context,
+                                      listen: false)
+                                  .getInitUserImage,
+                              'userUid': Provider.of<Authentication>(context,
+                                      listen: false)
+                                  .getUserUid,
+                              'userEmail': Provider.of<FirebaseNotifier>(
+                                      context,
+                                      listen: false)
+                                  .getInitUserEmail,
+                              'time': Timestamp.now(),
+                            },
+                            followerUid: Provider.of<Authentication>(context,
+                                    listen: false)
+                                .getUserUid,
+                            followerDocId: userUid,
+                            followerData: {
+                              'userName': snapshot.data.data()['userName'],
+                              'userImage': snapshot.data.data()['userImage'],
+                              'userEmail': snapshot.data.data()['userEmail'],
+                              'userUid': snapshot.data.data()['userUid'],
+                              'time': Timestamp.now(),
+                            })
+                        .whenComplete(() {
+                      followNotification(
+                          context: context,
+                          data: 'Unfollowed',
+                          name: snapshot.data.data()['userName']);
+                    });
+                  },
                   color: blueColor,
                   child: Text(
-                    'Message',
+                    'Unfollow',
                     style: TextStyle(
                         color: whiteColor,
                         fontWeight: FontWeight.bold,
@@ -506,7 +548,7 @@ class AltProfileHelper with ChangeNotifier {
     );
   }
 
-  followNotification({BuildContext context, String name}) {
+  followNotification({BuildContext context, String name, String data}) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -530,7 +572,7 @@ class AltProfileHelper with ChangeNotifier {
                     ),
                   ),
                   Text(
-                    'Followed $name',
+                    '$data $name',
                     style: TextStyle(
                         color: whiteColor,
                         fontWeight: FontWeight.bold,

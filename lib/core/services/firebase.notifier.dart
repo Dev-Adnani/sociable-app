@@ -137,6 +137,29 @@ class FirebaseNotifier with ChangeNotifier {
     });
   }
 
+  Future unFollowUser(
+      {@required String followingUid,
+      @required String followingDocId,
+      @required dynamic followingData,
+      @required String followerUid,
+      @required String followerDocId,
+      @required dynamic followerData}) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(followingUid)
+        .collection('followers')
+        .doc(followingDocId)
+        .delete()
+        .whenComplete(() async {
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(followerUid)
+          .collection('following')
+          .doc(followerDocId)
+          .delete();
+    });
+  }
+
   Future submitChatroomData({
     @required String chatRoomID,
     @required dynamic chatRoomData,

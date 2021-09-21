@@ -22,9 +22,9 @@ class Lava extends StatelessWidget {
         home: SplashScreen(),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          accentColor: blueColor,
           fontFamily: 'Poppins',
           canvasColor: Colors.transparent,
+          colorScheme: ColorScheme.fromSwatch().copyWith(secondary: blueColor),
         ),
       ),
     );
