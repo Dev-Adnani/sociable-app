@@ -78,7 +78,7 @@ class AltProfileHelper with ChangeNotifier {
       @required AsyncSnapshot<DocumentSnapshot> snapshot,
       @required String userUid}) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.37,
+      height: MediaQuery.of(context).size.height * 0.33,
       width: MediaQuery.of(context).size.width,
       child: Column(
         children: [
@@ -112,175 +112,149 @@ class AltProfileHelper with ChangeNotifier {
                             fontSize: 16.0),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            EvaIcons.email,
-                            color: greenColor,
-                            size: 16,
-                          ),
-                          Text(
-                            snapshot.data.data()['userEmail'],
-                            style: TextStyle(
-                                color: whiteColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10.0),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
               Container(
                 width: 190,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              checkFollowersSheet(
-                                  context: context, snapshot: snapshot);
-                            },
-                            child: Container(
-                              height: 70.0,
-                              width: 80.0,
-                              child: Column(
-                                children: [
-                                  StreamBuilder<QuerySnapshot>(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(snapshot.data.data()['userUid'])
-                                        .collection('followers')
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      } else {
-                                        return new Text(
-                                          snapshot.data.docs.length.toString(),
-                                          style: TextStyle(
-                                              color: whiteColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20.0),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                  Text(
-                                    'Followers',
-                                    style: TextStyle(
-                                        color: whiteColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12.0),
-                                  )
-                                ],
-                              ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            checkFollowersSheet(
+                                context: context, snapshot: snapshot);
+                          },
+                          child: Container(
+                            height: 70.0,
+                            width: 80.0,
+                            child: Column(
+                              children: [
+                                StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(snapshot.data.data()['userUid'])
+                                      .collection('followers')
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else {
+                                      return new Text(
+                                        snapshot.data.docs.length.toString(),
+                                        style: TextStyle(
+                                            color: whiteColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0),
+                                      );
+                                    }
+                                  },
+                                ),
+                                Text(
+                                  'Followers',
+                                  style: TextStyle(
+                                      color: whiteColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12.0),
+                                )
+                              ],
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              checkFollowingSheet(
-                                  context: context, snapshot: snapshot);
-                            },
-                            child: Container(
-                              height: 70.0,
-                              width: 80.0,
-                              child: Column(
-                                children: [
-                                  StreamBuilder<QuerySnapshot>(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(snapshot.data.data()['userUid'])
-                                        .collection('following')
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      } else {
-                                        return new Text(
-                                          snapshot.data.docs.length.toString(),
-                                          style: TextStyle(
-                                              color: whiteColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20.0),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                  Text(
-                                    'Following',
-                                    style: TextStyle(
-                                        color: whiteColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12.0),
-                                  )
-                                ],
-                              ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            print('Hell');
+                            checkFollowingSheet(
+                                context: context, snapshot: snapshot);
+                          },
+                          child: Container(
+                            height: 70.0,
+                            width: 80.0,
+                            child: Column(
+                              children: [
+                                StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(snapshot.data.data()['userUid'])
+                                      .collection('following')
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else {
+                                      return new Text(
+                                        snapshot.data.docs.length.toString(),
+                                        style: TextStyle(
+                                            color: whiteColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0),
+                                      );
+                                    }
+                                  },
+                                ),
+                                Text(
+                                  'Following',
+                                  style: TextStyle(
+                                      color: whiteColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12.0),
+                                )
+                              ],
                             ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Container(
+                      height: 70.0,
+                      width: 80.0,
+                      child: Column(
+                        children: [
+                          StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(snapshot.data.data()['userUid'])
+                                .collection('posts')
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else {
+                                return new Text(
+                                  snapshot.data.docs.length.toString(),
+                                  style: TextStyle(
+                                      color: whiteColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20.0),
+                                );
+                              }
+                            },
+                          ),
+                          Text(
+                            'Posts',
+                            style: TextStyle(
+                                color: whiteColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12.0),
                           )
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Container(
-                        height: 70.0,
-                        width: 80.0,
-                        child: Column(
-                          children: [
-                            StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection('users')
-                                  .doc(snapshot.data.data()['userUid'])
-                                  .collection('posts')
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                } else {
-                                  return new Text(
-                                    snapshot.data.docs.length.toString(),
-                                    style: TextStyle(
-                                        color: whiteColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20.0),
-                                  );
-                                }
-                              },
-                            ),
-                            Text(
-                              'Posts',
-                              style: TextStyle(
-                                  color: whiteColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12.0),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
                   ],
                 ),
-              )
+              ),
             ],
           ),
           Container(
@@ -397,6 +371,52 @@ class AltProfileHelper with ChangeNotifier {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget status({BuildContext context, String userUid}) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(top: 8.0, left: 40.0, right: 40.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userUid)
+                  .collection('status')
+                  .doc('st')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.connectionState ==
+                        ConnectionState.waiting ||
+                    !snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return Expanded(
+                    child: Text(
+                      snapshot.data.data() == null
+                          ? 'Hey there I am on Sociable'
+                          : snapshot.data.data()['userBio'],
+                      maxLines: 8,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: whiteColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10.0),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

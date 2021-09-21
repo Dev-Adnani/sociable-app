@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
 import 'package:social_tower/core/helpers/ProfileHelper/profile.helper.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
+import 'package:social_tower/meta/screen/Homescreen/home.screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key key}) : super(key: key);
@@ -14,11 +16,14 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
-          icon: Icon(
-            EvaIcons.settings2Outline,
-            color: blueColor,
-          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              PageTransition(
+                  child: HomeScreen(), type: PageTransitionType.rightToLeft),
+            );
+          },
+          icon: Icon(Icons.arrow_back_ios_outlined, color: greenColor),
         ),
         centerTitle: true,
         actions: [
@@ -38,7 +43,7 @@ class ProfileScreen extends StatelessWidget {
           text: TextSpan(
               text: 'My ',
               style: TextStyle(
-                color: whiteColor,
+                color: redColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 20.0,
               ),
@@ -46,7 +51,7 @@ class ProfileScreen extends StatelessWidget {
                 TextSpan(
                   text: 'Profile',
                   style: TextStyle(
-                    color: blueColor,
+                    color: greenColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 20.0,
                   ),
@@ -76,6 +81,10 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       Provider.of<ProfileHelpers>(context, listen: false)
                           .headerProfile(context, snapshot),
+                      Provider.of<ProfileHelpers>(context, listen: false)
+                          .divider(),
+                      Provider.of<ProfileHelpers>(context, listen: false)
+                          .status(context: context),
                       Provider.of<ProfileHelpers>(context, listen: false)
                           .divider(),
                       Provider.of<ProfileHelpers>(context, listen: false)

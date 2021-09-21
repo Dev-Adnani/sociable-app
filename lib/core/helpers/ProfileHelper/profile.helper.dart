@@ -1,26 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
+import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
+import 'package:social_tower/core/services/firebase.notifier.dart';
 import 'package:social_tower/core/utils/posts.functions.dart';
 import 'package:social_tower/meta/screen/AltProfileScreen/alt.profile.screen.dart';
 import 'package:social_tower/meta/screen/Landingscreen/landing.screen.dart';
 
 class ProfileHelpers with ChangeNotifier {
-  Widget headerProfile(
-      BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+  TextEditingController editBioController = TextEditingController();
+
+  Widget headerProfile(BuildContext context, dynamic snapshot) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.25,
+      height: MediaQuery.of(context).size.height * 0.22,
       width: MediaQuery.of(context).size.width,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
-            height: 220.0,
+            height: 240.0,
             width: 170.0,
             child: Column(
               children: [
@@ -46,37 +50,16 @@ class ProfileHelpers with ChangeNotifier {
                         fontSize: 16.0),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        EvaIcons.email,
-                        color: greenColor,
-                        size: 16,
-                      ),
-                      Text(
-                        snapshot.data.data()['userEmail'],
-                        style: TextStyle(
-                            color: whiteColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10.0),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
           Container(
             width: 190,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
+                  padding: EdgeInsets.only(top: 20.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -173,7 +156,7 @@ class ProfileHelpers with ChangeNotifier {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
+                  padding: const EdgeInsets.only(top: 20.0),
                   child: Container(
                     height: 70.0,
                     width: 80.0,
@@ -215,8 +198,159 @@ class ProfileHelpers with ChangeNotifier {
                 )
               ],
             ),
-          )
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget status({BuildContext context}) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(top: 8.0, left: 40.0, right: 40.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(Provider.of<Authentication>(context, listen: false)
+                      .getUserUid)
+                  .collection('status')
+                  .doc('st')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.connectionState ==
+                        ConnectionState.waiting ||
+                    !snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return Expanded(
+                    child: Text(
+                      snapshot.data.data() == null
+                          ? 'Hey there I am on Sociable'
+                          : snapshot.data.data()['userBio'],
+                      maxLines: 8,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: whiteColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10.0),
+                    ),
+                  );
+                }
+              },
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.15,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            color: blueGreyColor,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12.0),
+                              topRight: Radius.circular(12.0),
+                            ),
+                          ),
+                          child: Center(
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 300,
+                                  height: 100,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 12.0),
+                                    child: TextField(
+                                      controller: editBioController,
+                                      maxLines: 2,
+                                      textCapitalization:
+                                          TextCapitalization.words,
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(50)
+                                      ],
+                                      maxLength: 50,
+                                      maxLengthEnforcement:
+                                          MaxLengthEnforcement.enforced,
+                                      decoration: InputDecoration(
+                                        hintText: 'Edit your Bio',
+                                        hintStyle: TextStyle(
+                                            color: whiteColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.0),
+                                      ),
+                                      style: TextStyle(
+                                          color: whiteColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: FloatingActionButton(
+                                    backgroundColor: redColor,
+                                    child: Icon(
+                                      EvaIcons.uploadOutline,
+                                      color: greenColor,
+                                    ),
+                                    onPressed: () async {
+                                      if (editBioController.text.isNotEmpty) {
+                                        Provider.of<FirebaseNotifier>(context,
+                                                listen: false)
+                                            .addBio(
+                                                userUid:
+                                                    Provider.of<Authentication>(
+                                                            context,
+                                                            listen: false)
+                                                        .getUserUid,
+                                                data: {
+                                              'userBio': editBioController.text
+                                            })
+                                          ..whenComplete(() {
+                                            editBioController.clear();
+                                            Navigator.pop(context);
+                                          });
+                                      } else {
+                                        Provider.of<LandingService>(context,
+                                                listen: false)
+                                            .warningText(
+                                                context,
+                                                'Please Type Something In Order To Edit',
+                                                16.0);
+                                      }
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    });
+              },
+              child: Icon(
+                EvaIcons.edit,
+                color: greenColor,
+                size: 16,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -495,17 +629,6 @@ class ProfileHelpers with ChangeNotifier {
                                     ),
                                     type: PageTransitionType.rightToLeft));
                           },
-                          trailing: MaterialButton(
-                            color: greyColor,
-                            child: Text(
-                              'Unfollow',
-                              style: TextStyle(
-                                  color: whiteColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0),
-                            ),
-                            onPressed: () {},
-                          ),
                           leading: CircleAvatar(
                             backgroundColor: darkColor,
                             backgroundImage: NetworkImage(
@@ -517,13 +640,6 @@ class ProfileHelpers with ChangeNotifier {
                                 color: whiteColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16.0),
-                          ),
-                          subtitle: Text(
-                            documentSnapshot.data()['userEmail'],
-                            style: TextStyle(
-                                color: redColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14.0),
                           ),
                         );
                       }
@@ -577,16 +693,9 @@ class ProfileHelpers with ChangeNotifier {
                           title: Text(
                             documentSnapshot.data()['userName'],
                             style: TextStyle(
-                                color: whiteColor,
+                                color: greenColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16.0),
-                          ),
-                          subtitle: Text(
-                            documentSnapshot.data()['userEmail'],
-                            style: TextStyle(
-                                color: redColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14.0),
                           ),
                         );
                       }

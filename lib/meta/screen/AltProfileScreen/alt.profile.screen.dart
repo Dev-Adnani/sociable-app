@@ -49,6 +49,10 @@ class AltProfile extends StatelessWidget {
                     Provider.of<AltProfileHelper>(context, listen: false)
                         .divider(),
                     Provider.of<AltProfileHelper>(context, listen: false)
+                        .status(context: context, userUid: userUid),
+                    Provider.of<AltProfileHelper>(context, listen: false)
+                        .divider(),
+                    Provider.of<AltProfileHelper>(context, listen: false)
                         .middleProfile(context: context, snapshot: snapshot),
                     Provider.of<AltProfileHelper>(context, listen: false)
                         .footerProfile(context: context, snapshot: snapshot)
