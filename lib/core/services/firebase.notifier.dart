@@ -114,6 +114,15 @@ class FirebaseNotifier with ChangeNotifier {
     });
   }
 
+  Future addBio({@required dynamic data, @required String userUid}) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(userUid)
+        .collection('status')
+        .doc('st')
+        .set(data);
+  }
+
   Future followUser(
       {@required String followingUid,
       @required String followingDocId,

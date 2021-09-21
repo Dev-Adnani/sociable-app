@@ -30,15 +30,29 @@ class AltProfileHelper with ChangeNotifier {
       ),
       title: RichText(
         text: TextSpan(
-            text: 'social',
+            text: 'S',
             style: TextStyle(
-              color: whiteColor,
+              color: greenColor,
               fontWeight: FontWeight.bold,
               fontSize: 20.0,
             ),
             children: [
               TextSpan(
-                text: 'Tower',
+                text: 'oc',
+                style: TextStyle(
+                    color: yellowColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0),
+              ),
+              TextSpan(
+                text: 'ia',
+                style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0),
+              ),
+              TextSpan(
+                text: 'ble',
                 style: TextStyle(
                     color: redColor,
                     fontWeight: FontWeight.bold,
@@ -314,7 +328,7 @@ class AltProfileHelper with ChangeNotifier {
                         .whenComplete(() {
                       followNotification(
                           context: context,
-                          data: 'Follow ',
+                          data: 'Followed ',
                           name: snapshot.data.data()['userName']);
                     });
                   },
@@ -366,7 +380,7 @@ class AltProfileHelper with ChangeNotifier {
                         .whenComplete(() {
                       followNotification(
                           context: context,
-                          data: 'Unfollowed',
+                          data: 'Unfollowed ',
                           name: snapshot.data.data()['userName']);
                     });
                   },
@@ -665,13 +679,6 @@ class AltProfileHelper with ChangeNotifier {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16.0),
                           ),
-                          subtitle: Text(
-                            documentSnapshot.data()['userEmail'],
-                            style: TextStyle(
-                                color: redColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14.0),
-                          ),
                         );
                       }
                     }).toList(),
@@ -727,13 +734,6 @@ class AltProfileHelper with ChangeNotifier {
                                 color: whiteColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16.0),
-                          ),
-                          subtitle: Text(
-                            documentSnapshot.data()['userEmail'],
-                            style: TextStyle(
-                                color: redColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14.0),
                           ),
                         );
                       }

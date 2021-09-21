@@ -5,7 +5,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
+import 'package:social_tower/core/helpers/AltScreenHelpers/alt.profile.helper.dart';
 import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier.dart';
+import 'package:social_tower/core/helpers/ProfileHelper/profile.helper.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 import 'package:social_tower/core/services/firebase.notifier.dart';
 import 'package:social_tower/meta/screen/AltProfileScreen/alt.profile.screen.dart';
@@ -599,7 +601,10 @@ class PostFunctions with ChangeNotifier {
         });
   }
 
-  showLikes({@required BuildContext context, @required String postId}) {
+  showLikes({
+    @required BuildContext context,
+    @required String postId,
+  }) {
     return showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -691,14 +696,6 @@ class PostFunctions with ChangeNotifier {
                                 fontSize: 16.0,
                               ),
                             ),
-                            subtitle: Text(
-                              documentSnapshot.data()['userEmail'],
-                              style: TextStyle(
-                                color: whiteColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12.0,
-                              ),
-                            ),
                             trailing: Provider.of<Authentication>(context,
                                             listen: false)
                                         .getUserUid ==
@@ -717,7 +714,68 @@ class PostFunctions with ChangeNotifier {
                                         fontSize: 14.0,
                                       ),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Provider.of<FirebaseNotifier>(context,
+                                              listen: false)
+                                          .followUser(
+                                              followingUid: documentSnapshot
+                                                  .data()['userUid'],
+                                              followingDocId:
+                                                  Provider.of<Authentication>(
+                                                          context,
+                                                          listen: false)
+                                                      .getUserUid,
+                                              followingData: {
+                                                'userName': Provider.of<
+                                                            FirebaseNotifier>(
+                                                        context,
+                                                        listen: false)
+                                                    .getInitUserName,
+                                                'userImage': Provider.of<
+                                                            FirebaseNotifier>(
+                                                        context,
+                                                        listen: false)
+                                                    .getInitUserImage,
+                                                'userUid':
+                                                    Provider.of<Authentication>(
+                                                            context,
+                                                            listen: false)
+                                                        .getUserUid,
+                                                'userEmail': Provider.of<
+                                                            FirebaseNotifier>(
+                                                        context,
+                                                        listen: false)
+                                                    .getInitUserEmail,
+                                                'time': Timestamp.now(),
+                                              },
+                                              followerUid:
+                                                  Provider.of<Authentication>(
+                                                          context,
+                                                          listen: false)
+                                                      .getUserUid,
+                                              followerDocId: documentSnapshot
+                                                  .data()['userUid'],
+                                              followerData: {
+                                                'userName': documentSnapshot
+                                                    .data()['userName'],
+                                                'userImage': documentSnapshot
+                                                    .data()['userImage'],
+                                                'userEmail': documentSnapshot
+                                                    .data()['userEmail'],
+                                                'userUid': documentSnapshot
+                                                    .data()['userUid'],
+                                                'time': Timestamp.now(),
+                                              })
+                                          .whenComplete(() {
+                                        Provider.of<AltProfileHelper>(context,
+                                                listen: false)
+                                            .followNotification(
+                                                context: context,
+                                                data: 'Followed ',
+                                                name: documentSnapshot
+                                                    .data()['userName']);
+                                      });
+                                    },
                                   ),
                           );
                         }).toList(),
@@ -845,7 +903,72 @@ class PostFunctions with ChangeNotifier {
                                             fontSize: 14.0,
                                           ),
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Provider.of<FirebaseNotifier>(context,
+                                                  listen: false)
+                                              .followUser(
+                                                  followingUid: documentSnapshot
+                                                      .data()['userUid'],
+                                                  followingDocId: Provider.of<
+                                                              Authentication>(
+                                                          context,
+                                                          listen: false)
+                                                      .getUserUid,
+                                                  followingData: {
+                                                    'userName': Provider.of<
+                                                                FirebaseNotifier>(
+                                                            context,
+                                                            listen: false)
+                                                        .getInitUserName,
+                                                    'userImage': Provider.of<
+                                                                FirebaseNotifier>(
+                                                            context,
+                                                            listen: false)
+                                                        .getInitUserImage,
+                                                    'userUid': Provider.of<
+                                                                Authentication>(
+                                                            context,
+                                                            listen: false)
+                                                        .getUserUid,
+                                                    'userEmail': Provider.of<
+                                                                FirebaseNotifier>(
+                                                            context,
+                                                            listen: false)
+                                                        .getInitUserEmail,
+                                                    'time': Timestamp.now(),
+                                                  },
+                                                  followerUid: Provider.of<
+                                                              Authentication>(
+                                                          context,
+                                                          listen: false)
+                                                      .getUserUid,
+                                                  followerDocId:
+                                                      documentSnapshot
+                                                          .data()['userUid'],
+                                                  followerData: {
+                                                    'userName': documentSnapshot
+                                                        .data()['userName'],
+                                                    'userImage':
+                                                        documentSnapshot.data()[
+                                                            'userImage'],
+                                                    'userEmail':
+                                                        documentSnapshot.data()[
+                                                            'userEmail'],
+                                                    'userUid': documentSnapshot
+                                                        .data()['userUid'],
+                                                    'time': Timestamp.now(),
+                                                  })
+                                              .whenComplete(() {
+                                            Provider.of<AltProfileHelper>(
+                                                    context,
+                                                    listen: false)
+                                                .followNotification(
+                                                    context: context,
+                                                    data: 'Followed ',
+                                                    name: documentSnapshot
+                                                        .data()['userName']);
+                                          });
+                                        },
                                       ),
                               );
                             }).toList(),

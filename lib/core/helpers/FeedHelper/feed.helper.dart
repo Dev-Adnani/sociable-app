@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
+import 'package:social_tower/core/services/firebase.notifier.dart';
 import 'package:social_tower/core/utils/posts.functions.dart';
 import 'package:social_tower/core/utils/upload.post.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
@@ -26,11 +27,25 @@ class FeedHelpers with ChangeNotifier {
             Icons.camera_enhance_rounded,
             color: greenColor,
           ),
-        )
+        ),
       ],
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CircleAvatar(
+          radius: 35.0,
+          backgroundColor: blueGreyColor,
+          backgroundImage: Provider.of<FirebaseNotifier>(context, listen: false)
+                      .getInitUserImage ==
+                  null
+              ? AssetImage('assets/images/loading.png')
+              : NetworkImage(
+                  Provider.of<FirebaseNotifier>(context, listen: false)
+                      .getInitUserImage),
+        ),
+      ),
       title: RichText(
         text: TextSpan(
-            text: 'Tower ',
+            text: 'Sociable ',
             style: TextStyle(
               color: whiteColor,
               fontWeight: FontWeight.bold,

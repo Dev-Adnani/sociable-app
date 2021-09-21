@@ -10,7 +10,6 @@ class FeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: blueGreyColor,
-      drawer: Drawer(),
       appBar: Provider.of<FeedHelpers>(context, listen: false).appBar(context),
       body: Provider.of<FeedHelpers>(context, listen: false).feedBody(context),
     );
