@@ -595,8 +595,6 @@ class PostFunctions with ChangeNotifier {
                                           listen: false)
                                       .warningText(context,
                                           'Comment Added Successfully', 16.0);
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
                                 });
                               } else {
                                 Provider.of<LandingService>(context,

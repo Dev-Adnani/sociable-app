@@ -6,11 +6,12 @@ import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
-import 'package:social_tower/core/services/firebase.notifier.dart';
 import 'package:social_tower/core/utils/posts.functions.dart';
 import 'package:social_tower/core/utils/upload.post.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 import 'package:social_tower/meta/screen/AltProfileScreen/alt.profile.screen.dart';
+import 'package:social_tower/meta/screen/Profilescreen/profile.screen.dart';
+import 'package:social_tower/meta/screen/Stories/stories.dart';
 
 class FeedHelpers with ChangeNotifier {
   Widget appBar(BuildContext context) {
@@ -30,19 +31,18 @@ class FeedHelpers with ChangeNotifier {
         ),
       ],
       leading: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: CircleAvatar(
-          radius: 35.0,
-          backgroundColor: blueGreyColor,
-          backgroundImage: Provider.of<FirebaseNotifier>(context, listen: false)
-                      .getInitUserImage ==
-                  null
-              ? AssetImage('assets/images/loading.png')
-              : NetworkImage(
-                  Provider.of<FirebaseNotifier>(context, listen: false)
-                      .getInitUserImage),
-        ),
-      ),
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(
+            icon: Icon(FontAwesomeIcons.userAlt),
+            onPressed: () {
+              Navigator.push(
+                context,
+                PageTransition(
+                    child: ProfileScreen(),
+                    type: PageTransitionType.rightToLeft),
+              );
+            },
+          )),
       title: RichText(
         text: TextSpan(
             text: 'Sociable ',
@@ -75,45 +75,89 @@ class FeedHelpers with ChangeNotifier {
           color: darkColor,
           borderRadius: BorderRadius.circular(12.0),
         ),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('stories').snapshots(),
+          builder: (_, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return ListView(
+                scrollDirection: Axis.horizontal,
+                children:
+                    snapshot.data.docs.map((DocumentSnapshot documentSnapshot) {
+                  return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                              child: Stories(
+                                documentSnapshot: documentSnapshot,
+                              ),
+                              type: PageTransitionType.bottomToTop),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Container(
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                documentSnapshot.data()['userImage']),
+                          ),
+                          height: 30,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: blueColor,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                      ));
+                }).toList(),
+              );
+            }
+          },
+        ),
       ),
     );
   }
 
   Widget feedBody(BuildContext context) {
-    return SingleChildScrollView(
-      physics: NeverScrollableScrollPhysics(),
-      scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding:
-            EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.08),
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: darkColor.withOpacity(0.6),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(18.0),
-              topRight: Radius.circular(18.0),
+    return Expanded(
+      child: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 4.0),
+          child: Container(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('posts')
+                  .orderBy('time', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: SizedBox(
+                        height: 500.0,
+                        width: 400.0,
+                        child: Lottie.asset('assets/animations/loading.json')),
+                  );
+                } else {
+                  return loadPost(context, snapshot);
+                }
+              },
             ),
-          ),
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('posts')
-                .orderBy('time', descending: true)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: SizedBox(
-                    height: 500,
-                    width: 400.0,
-                    child: Lottie.asset('assets/animations/loading.json'),
-                  ),
-                );
-              } else {
-                return loadPost(context, snapshot);
-              }
-            },
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                color: darkColor.withOpacity(0.6),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(18.0),
+                    topRight: Radius.circular(18.0))),
           ),
         ),
       ),

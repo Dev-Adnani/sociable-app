@@ -381,114 +381,85 @@ class ProfileHelpers with ChangeNotifier {
     );
   }
 
-  Widget middleProfile(
-      BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                width: 150.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(2.0),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.userAstronaut,
-                      color: yellowColor,
-                      size: 16,
-                    ),
-                    Text(
-                      'Recently Added',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                          color: whiteColor),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Container(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(snapshot.data.data()['userUid'])
-                        .collection('following')
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else {
-                        return new ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: snapshot.data.docs
-                              .map((DocumentSnapshot documentSnapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            } else {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: new Container(
-                                  height: 60.0,
-                                  width: 60.0,
-                                  child: GestureDetector(
-                                      onTap: () {
-                                        if (documentSnapshot
-                                                .data()['userUid'] !=
-                                            Provider.of<Authentication>(context,
-                                                    listen: false)
-                                                .getUserUid) {
-                                          Navigator.push(
-                                            context,
-                                            PageTransition(
-                                                child: AltProfile(
-                                                  userUid: documentSnapshot
-                                                      .data()['userUid'],
-                                                ),
-                                                type: PageTransitionType
-                                                    .bottomToTop),
-                                          );
-                                        }
-                                      },
-                                      child: CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                            documentSnapshot
-                                                .data()['userImage']),
-                                      )),
-                                ),
-                              );
-                            }
-                          }).toList(),
-                        );
-                      }
-                    },
-                  ),
-                  height: MediaQuery.of(context).size.height * 0.08,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      color: darkColor.withOpacity(0.4),
-                      borderRadius: BorderRadius.circular(15.0)),
-                ),
-              )
-            ],
+  Widget middleProfile(BuildContext context, dynamic snapshot) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 110.0,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(2.0)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(FontAwesomeIcons.userAstronaut,
+                    color: yellowColor, size: 16),
+                Text('Highlights',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.0,
+                        color: whiteColor))
+              ],
+            ),
           ),
-        ),
-      ],
+          Container(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(Provider.of<Authentication>(context, listen: false)
+                      .getUserUid)
+                  .collection('highlights')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else {
+                  return new ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: snapshot.data.docs
+                          .map((DocumentSnapshot documentSnapshot) {
+                        return GestureDetector(
+                          onTap: () {
+                            storyWidget.previewAllHighlights(
+                                context, documentSnapshot.data()['title']);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: darkColor,
+                                    backgroundImage: NetworkImage(
+                                        documentSnapshot.data()['cover']),
+                                    radius: 20,
+                                  ),
+                                  Text(documentSnapshot.data()['title'],
+                                      style: TextStyle(
+                                          color: greenColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12.0))
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList());
+                }
+              },
+            ),
+            height: MediaQuery.of(context).size.height * 0.1,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                color: darkColor.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(15.0)),
+          )
+        ],
+      ),
     );
   }
 
