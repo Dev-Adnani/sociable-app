@@ -6,6 +6,7 @@ import 'package:social_tower/core/services/firebase.notifier.dart';
 import 'package:social_tower/meta/screen/Chatscreen/chat.screen.dart';
 import 'package:social_tower/meta/screen/Feedscreen/feed.screen.dart';
 import 'package:social_tower/meta/screen/Profilescreen/profile.screen.dart';
+import 'package:social_tower/meta/screen/SearchScreen/search.user.screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: homePageController,
         children: [
           FeedScreen(),
+          SearchUser(),
           ChatRoomScreen(),
           ProfileScreen(),
         ],

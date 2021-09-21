@@ -25,19 +25,24 @@ class HomePageHelpers with ChangeNotifier {
       backgroundColor: Color(0xff040307),
       items: [
         CustomNavigationBarItem(icon: Icon(EvaIcons.home)),
+        CustomNavigationBarItem(
+          icon: Icon(Icons.search),
+        ),
         CustomNavigationBarItem(icon: Icon(EvaIcons.messageCircle)),
         CustomNavigationBarItem(
-            icon: CircleAvatar(
-          radius: 35.0,
-          backgroundColor: blueGreyColor,
-          backgroundImage: Provider.of<FirebaseNotifier>(context, listen: false)
-                      .getInitUserImage ==
-                  null
-              ? AssetImage('assets/images/loading.png')
-              : NetworkImage(
-                  Provider.of<FirebaseNotifier>(context, listen: false)
-                      .getInitUserImage),
-        )),
+          icon: CircleAvatar(
+            radius: 35.0,
+            backgroundColor: blueGreyColor,
+            backgroundImage:
+                Provider.of<FirebaseNotifier>(context, listen: false)
+                            .getInitUserImage ==
+                        null
+                    ? AssetImage('assets/images/loading.png')
+                    : NetworkImage(
+                        Provider.of<FirebaseNotifier>(context, listen: false)
+                            .getInitUserImage),
+          ),
+        ),
       ],
     );
   }

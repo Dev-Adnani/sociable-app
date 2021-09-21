@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: RichText(
           text: TextSpan(
-              text: 'social',
+              text: 'soci',
               style: TextStyle(
                   fontFamily: 'Poppins',
                   color: whiteColor,
@@ -40,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   fontSize: 30.0),
               children: [
                 TextSpan(
-                  text: 'Tower',
+                  text: 'able',
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       color: blueColor,
