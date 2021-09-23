@@ -1,16 +1,56 @@
-# social_tower
+# Sociable
 
-A new Flutter project.
+<img align="left"  height="200px" width="200px" alt="ToDo"  src="https://github.com/Dev-Adnani/sociable-app/blob/main/assets/icons/appicon.png"/>
 
-## Getting Started
+##  Brief About App
 
-This project is a starting point for a Flutter application.
+- A Mini Insta Clone !
+- Sociable is a Flutter Social Media App With Complete Backend And Scalability
 
-A few resources to get you started if this is your first Flutter project:
+## ⚙️ Tech-Stack
+The application is built entirely with Flutter. For the backend services, I have made use of Firebase.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 💫 App Features
+ 
+- Firebase Auth ( Email + Google + Facebook)
+- Group Messaging
+- Story Features
+- Story Collection 
+- Managing User Followers/Following
+- User Online/Offline Status
+- Post Like + Comments + Rewards
+- Handling Chatroom Admin/Member
+- Search Users
+
+## Libraries
+
+- Main Library Used in App 
+    - Provider
+    - http
+    - Cloud Firestore
+    - Custom Navigation Bar
+    - Eva Icons Flutter
+    - Firebase Auth
+    - Firebase Core
+    - Firebase Storage
+    - Google Sign In
+    - Image Picker
+    - Page Transition
+    - Circular Countdown Timer
+    - Flutter Login Facebook
+    - Timeago
+    - Nano-Id
+
+
+## :zap: Screenshots
+
+  <img align="left" alt="FoodFest"  src="https://i.imgur.com/dD4CZHo.png">
+  <img align="left" alt="FoodFest"  src="https://i.imgur.com/Ntf7xGr.png">
+  <img align="left" alt="FoodFest"  src="https://i.imgur.com/hlTd4hl.png">
+  <img align="left" alt="FoodFest"  src="https://i.imgur.com/e5SA1cS.png">
+
+
+## :heart: Found this project useful?
+
+If you found this project useful, then please consider giving it a :star: on Github and sharing it with your friends via social media.
