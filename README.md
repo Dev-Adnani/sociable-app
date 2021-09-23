@@ -5,7 +5,8 @@
 ##  Brief About App
 
 - A Mini Insta Clone !
-- Sociable is a Flutter Social Media App With Complete Backend And Scalability
+-  Sociable could be a Flutter Social Media App With Complete Backend And quantifiability.
+
 
 ## ⚙️ Tech-Stack
 The application is built entirely with Flutter. For the backend services, I have made use of Firebase.
