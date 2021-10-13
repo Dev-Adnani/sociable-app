@@ -444,138 +444,135 @@ class StoryWidget {
 
   showViewers(BuildContext context, String storyId, String personUid) {
     return showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 150),
-                  child: Divider(
-                    thickness: 4.0,
-                    color: whiteColor,
-                  ),
+      context: context,
+      builder: (context) {
+        return Container(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 150),
+                child: Divider(
+                  thickness: 4.0,
+                  color: whiteColor,
                 ),
-                SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    width: MediaQuery.of(context).size.width,
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('stories')
-                          .doc(storyId)
-                          .collection('seen')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        } else {
-                          return ListView(
-                            children: snapshot.data.docs
-                                .map((DocumentSnapshot documentSnapshot) {
-                              Provider.of<StoriesHelper>(context, listen: false)
-                                  .storyTimePosted(
-                                      documentSnapshot.data()['time']);
-                              return ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        documentSnapshot.data()['userImage']),
-                                    backgroundColor: darkColor,
-                                    radius: 25.0,
-                                  ),
-                                  trailing: documentSnapshot
-                                              .data()['userUid'] !=
-                                          Provider.of<Authentication>(context,
-                                                  listen: false)
-                                              .getUserUid
-                                      ? IconButton(
-                                          icon: Icon(
-                                              FontAwesomeIcons.arrowCircleRight,
-                                              color: yellowColor),
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                PageTransition(
-                                                    child: AltProfile(
-                                                        userUid:
-                                                            documentSnapshot
-                                                                    .data()[
-                                                                'userUid']),
-                                                    type: PageTransitionType
-                                                        .bottomToTop));
-                                          },
-                                        )
-                                      : Container(
-                                          height: 0,
-                                          width: 0,
-                                        ),
-                                  title: Text(
-                                      documentSnapshot.data()['userName'],
-                                      style: TextStyle(
-                                          color: whiteColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.0)),
-                                  subtitle: Text(
-                                      Provider.of<StoriesHelper>(context,
-                                              listen: false)
-                                          .getLastSeenTime
-                                          .toString(),
-                                      style: TextStyle(
-                                          color: greenColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12.0)));
-                            }).toList(),
-                          );
-                        }
-                      },
-                    ))
-              ],
-            ),
-            height: MediaQuery.of(context).size.height * 0.5,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-                color: darkColor, borderRadius: BorderRadius.circular(12.0)),
-          );
-        });
+              ),
+              SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  width: MediaQuery.of(context).size.width,
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('stories')
+                        .doc(storyId)
+                        .collection('seen')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else {
+                        return ListView(
+                          children: snapshot.data.docs
+                              .map((DocumentSnapshot documentSnapshot) {
+                            Provider.of<StoriesHelper>(context, listen: false)
+                                .storyTimePosted(
+                                    documentSnapshot.data()['time']);
+                            return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      documentSnapshot.data()['userImage']),
+                                  backgroundColor: darkColor,
+                                  radius: 25.0,
+                                ),
+                                trailing: documentSnapshot.data()['userUid'] !=
+                                        Provider.of<Authentication>(context,
+                                                listen: false)
+                                            .getUserUid
+                                    ? IconButton(
+                                        icon: Icon(
+                                            FontAwesomeIcons.arrowCircleRight,
+                                            color: yellowColor),
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                  child: AltProfile(
+                                                      userUid: documentSnapshot
+                                                          .data()['userUid']),
+                                                  type: PageTransitionType
+                                                      .bottomToTop));
+                                        },
+                                      )
+                                    : Container(
+                                        height: 0,
+                                        width: 0,
+                                      ),
+                                title: Text(documentSnapshot.data()['userName'],
+                                    style: TextStyle(
+                                        color: whiteColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0)),
+                                subtitle: Text(
+                                    Provider.of<StoriesHelper>(context,
+                                            listen: false)
+                                        .getLastSeenTime
+                                        .toString(),
+                                    style: TextStyle(
+                                        color: greenColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12.0)));
+                          }).toList(),
+                        );
+                      }
+                    },
+                  ))
+            ],
+          ),
+          height: MediaQuery.of(context).size.height * 0.5,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              color: darkColor, borderRadius: BorderRadius.circular(12.0)),
+        );
+      },
+    );
   }
 
   previewAllHighlights(BuildContext context, String hightlightTitle) {
     return showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (context) {
-          return Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(Provider.of<Authentication>(context, listen: false)
-                      .getUserUid)
-                  .collection('highlights')
-                  .doc(hightlightTitle)
-                  .collection('stories')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(Provider.of<Authentication>(context, listen: false)
+                    .getUserUid)
+                .collection('highlights')
+                .doc(hightlightTitle)
+                .collection('stories')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return PageView(
+                    children: snapshot.data.docs
+                        .map((DocumentSnapshot documentSnapshot) {
+                  return Container(
+                    decoration: BoxDecoration(color: darkColor),
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: Image.network(documentSnapshot.data()['image']),
                   );
-                } else {
-                  return PageView(
-                      children: snapshot.data.docs
-                          .map((DocumentSnapshot documentSnapshot) {
-                    return Container(
-                      decoration: BoxDecoration(color: darkColor),
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
-                      child: Image.network(documentSnapshot.data()['image']),
-                    );
-                  }).toList());
-                }
-              },
-            ),
-          );
-        });
+                }).toList());
+              }
+            },
+          ),
+        );
+      },
+    );
   }
 }

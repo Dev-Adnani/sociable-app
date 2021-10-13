@@ -10,9 +10,12 @@ import 'package:social_tower/core/services/firebase.notifier.dart';
 import 'package:social_tower/meta/screen/AltProfileScreen/alt.profile.screen.dart';
 import 'package:social_tower/meta/screen/Homescreen/home.screen.dart';
 import 'package:social_tower/core/utils/posts.functions.dart';
+import 'package:nanoid/nanoid.dart';
 
 class AltProfileHelper with ChangeNotifier {
-  Widget appBar(BuildContext context) {
+  Widget appBar({
+    @required BuildContext context,
+  }) {
     return AppBar(
       centerTitle: true,
       leading: IconButton(
@@ -61,15 +64,6 @@ class AltProfileHelper with ChangeNotifier {
             ]),
       ),
       backgroundColor: blueGreyColor.withOpacity(0.4),
-      actions: [
-        IconButton(
-          icon: Icon(
-            EvaIcons.moreVertical,
-            color: whiteColor,
-          ),
-          onPressed: () {},
-        ),
-      ],
     );
   }
 
@@ -365,6 +359,91 @@ class AltProfileHelper with ChangeNotifier {
                         color: whiteColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    var generateID = nanoid(5);
+                    return showMenu(
+                        color: darkColor,
+                        context: context,
+                        position: RelativeRect.fromLTRB(300.0, 375.0, 0, 0),
+                        items: [
+                          PopupMenuItem(
+                            child: TextButton.icon(
+                              onPressed: () {
+                                Provider.of<FirebaseNotifier>(context,
+                                        listen: false)
+                                    .reportUser(
+                                        uniqueID: generateID,
+                                        followingDocId:
+                                            Provider.of<Authentication>(context,
+                                                    listen: false)
+                                                .getUserUid,
+                                        followingData: {
+                                          'userName':
+                                              Provider.of<FirebaseNotifier>(
+                                                      context,
+                                                      listen: false)
+                                                  .getInitUserName,
+                                          'userImage':
+                                              Provider.of<FirebaseNotifier>(
+                                                      context,
+                                                      listen: false)
+                                                  .getInitUserImage,
+                                          'userUid':
+                                              Provider.of<Authentication>(
+                                                      context,
+                                                      listen: false)
+                                                  .getUserUid,
+                                          'userEmail':
+                                              Provider.of<FirebaseNotifier>(
+                                                      context,
+                                                      listen: false)
+                                                  .getInitUserEmail,
+                                          'time': Timestamp.now(),
+                                        },
+                                        followerUid:
+                                            Provider.of<Authentication>(context,
+                                                    listen: false)
+                                                .getUserUid,
+                                        followerDocId: userUid,
+                                        followerData: {
+                                          'userName':
+                                              snapshot.data.data()['userName'],
+                                          'userImage':
+                                              snapshot.data.data()['userImage'],
+                                          'userEmail':
+                                              snapshot.data.data()['userEmail'],
+                                          'userUid':
+                                              snapshot.data.data()['userUid'],
+                                          'time': Timestamp.now(),
+                                        })
+                                    .whenComplete(() {
+                                  followNotification(
+                                      context: context,
+                                      data: 'Reported ',
+                                      name: snapshot.data.data()['userName']);
+                                });
+                              },
+                              label: Text(
+                                'Report User',
+                                style: TextStyle(
+                                  color: whiteColor,
+                                ),
+                              ),
+                              icon: Icon(
+                                FontAwesomeIcons.userCheck,
+                                color: whiteColor,
+                                size: 12,
+                              ),
+                            ),
+                          ),
+                        ]);
+                  },
+                  icon: Icon(
+                    EvaIcons.moreVertical,
+                    color: whiteColor,
                   ),
                 )
               ],

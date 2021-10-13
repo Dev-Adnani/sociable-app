@@ -12,8 +12,9 @@ class AltProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          Provider.of<AltProfileHelper>(context, listen: false).appBar(context),
+      appBar: Provider.of<AltProfileHelper>(context, listen: false).appBar(
+        context: context,
+      ),
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height,

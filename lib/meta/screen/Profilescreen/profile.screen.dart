@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_tower/app/constants/constant.colors.dart';
+import 'package:social_tower/core/helpers/LandingHelpers/landing.notifier.dart';
+import 'package:social_tower/core/helpers/LandingHelpers/landing.utlis.dart';
+import 'package:social_tower/core/helpers/LandingHelpers/landingService.notifier.dart';
 import 'package:social_tower/core/helpers/ProfileHelper/profile.helper.dart';
 import 'package:social_tower/core/services/authentication.notifier.dart';
 import 'package:social_tower/meta/screen/Homescreen/home.screen.dart';
@@ -29,12 +33,53 @@ class ProfileScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Provider.of<ProfileHelpers>(context, listen: false)
-                  .logoutDialog(context);
+              return showMenu(
+                  color: darkColor,
+                  context: context,
+                  position: RelativeRect.fromLTRB(300.0, 70.0, 0, 0),
+                  items: [
+                    PopupMenuItem(
+                      child: TextButton.icon(
+                        onPressed: () {
+                          Provider.of<ProfileHelpers>(context, listen: false)
+                              .logoutDialog(context);
+                        },
+                        label: Text(
+                          'Logout',
+                          style: TextStyle(
+                            color: whiteColor,
+                          ),
+                        ),
+                        icon: Icon(
+                          EvaIcons.logOut,
+                          color: whiteColor,
+                        ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      child: TextButton.icon(
+                        onPressed: () async {
+                          await Provider.of<ProfileHelpers>(context,
+                                  listen: false)
+                              .verificationDialog(context);
+                        },
+                        label: Text(
+                          'Apply For Verification',
+                          style: TextStyle(
+                            color: whiteColor,
+                          ),
+                        ),
+                        icon: Icon(
+                          FontAwesomeIcons.check,
+                          color: whiteColor,
+                        ),
+                      ),
+                    )
+                  ]);
             },
             icon: Icon(
-              EvaIcons.logOutOutline,
-              color: greenColor,
+              EvaIcons.moreVertical,
+              color: whiteColor,
             ),
           )
         ],

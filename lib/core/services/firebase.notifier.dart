@@ -53,6 +53,14 @@ class FirebaseNotifier with ChangeNotifier {
     });
   }
 
+  Future sendVerifiedTickRequest(
+      {@required BuildContext context, @required dynamic data}) async {
+    return FirebaseFirestore.instance
+        .collection('verifyAppel')
+        .doc(Provider.of<Authentication>(context, listen: false).getUserUid)
+        .set(data);
+  }
+
   Future uploadPostData(
       {@required String postId, @required dynamic data}) async {
     return FirebaseFirestore.instance.collection('posts').doc(postId).set(data);
@@ -141,6 +149,29 @@ class FirebaseNotifier with ChangeNotifier {
           .collection('users')
           .doc(followerUid)
           .collection('following')
+          .doc(followerDocId)
+          .set(followerData);
+    });
+  }
+
+  Future reportUser(
+      {@required String uniqueID,
+      @required String followingDocId,
+      @required dynamic followingData,
+      @required String followerUid,
+      @required String followerDocId,
+      @required dynamic followerData}) async {
+    return FirebaseFirestore.instance
+        .collection('reports')
+        .doc(uniqueID)
+        .collection('reportingUser')
+        .doc(followingDocId)
+        .set(followingData)
+        .whenComplete(() async {
+      return FirebaseFirestore.instance
+          .collection('reports')
+          .doc(uniqueID)
+          .collection('reportedUser')
           .doc(followerDocId)
           .set(followerData);
     });
