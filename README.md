@@ -23,6 +23,9 @@ The application is built entirely with Flutter. For the backend services, I have
 - Post Like + Comments + Rewards
 - Handling Chatroom Admin/Member
 - Search Users
+- Appel For Blue Tick
+- Report Other Users
+
 
 ## Libraries
 
