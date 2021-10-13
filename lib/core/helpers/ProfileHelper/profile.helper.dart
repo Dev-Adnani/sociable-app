@@ -571,6 +571,72 @@ class ProfileHelpers with ChangeNotifier {
         });
   }
 
+  verificationDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: darkColor,
+            title: Text(
+              'Are you Sure You Want To Appeal For Verification',
+              style: TextStyle(
+                  color: whiteColor,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              'Note All Your Details Will Automatically Fetched And Process Will Be Done ',
+              style: TextStyle(
+                  color: whiteColor,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w200),
+            ),
+            actions: [
+              MaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'No',
+                  style: TextStyle(
+                      color: whiteColor,
+                      decoration: TextDecoration.underline,
+                      decorationColor: whiteColor,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              MaterialButton(
+                color: redColor,
+                onPressed: () {
+                  Provider.of<FirebaseNotifier>(context, listen: false)
+                      .sendVerifiedTickRequest(context: context, data: {
+                    'userUid':
+                        Provider.of<Authentication>(context, listen: false)
+                            .getUserUid,
+                    'applied': 1,
+                  }).whenComplete(() {
+                    Provider.of<LandingService>(context, listen: false)
+                        .warningText(
+                      context,
+                      'Applied For Verification',
+                      16.0,
+                    );
+                  });
+                },
+                child: Text(
+                  'Yes',
+                  style: TextStyle(
+                      color: whiteColor,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
+          );
+        });
+  }
+
   checkFollowingSheet({BuildContext context, dynamic snapshot}) {
     return showModalBottomSheet(
         context: context,
