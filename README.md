@@ -19,7 +19,6 @@ The application is built entirely with Flutter. For the backend services, I have
 - Story Features
 - Story Collection 
 - Managing User Followers/Following
-- User Online/Offline Status
 - Post Like + Comments + Rewards
 - Handling Chatroom Admin/Member
 - Search Users
